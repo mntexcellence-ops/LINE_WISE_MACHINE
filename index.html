@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Machine Inventory — DEKKO ISHO Group</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#E9EEF4;--card:#FFFFFF;--border:#DCE4EE;--text:#16324F;--body:#33475C;--muted:#64748B;--faint:#94A3B8;--soft:#F7FAFC;--soft2:#EDF2F7;--shadow:#16324f0d;--brand:#006666;--brand-b:#0E8A8A;--pink:#EC268F}
+[data-theme="dark"]{--bg:#0A1120;--card:#131E33;--border:#24365A;--text:#E8EEF9;--body:#C4D2E8;--muted:#93A5C4;--faint:#7186A8;--soft:#182740;--soft2:#1B2C4D;--shadow:#00000045;--brand:#0E8A8A;--brand-b:#14A3A3}
+[data-theme="dark"] input{color-scheme:dark}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);padding:14px;transition:background .25s,color .25s}
+.app{max-width:1460px;margin:0 auto}
+.topbar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px var(--shadow);margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.logoimg{height:52px;width:auto;display:block}
+.brand h1{font-size:19px;font-weight:800;letter-spacing:.4px}
+.brand h1 span{color:var(--brand-b)}
+.brand p{font-size:11.5px;color:var(--muted)}
+.live{font-size:11px;color:var(--muted);text-align:right}
+.layout{display:grid;grid-template-columns:222px 1fr;gap:14px}
+.side{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 2px 10px var(--shadow);height:fit-content;position:sticky;top:14px}
+.side h3{font-size:12px;letter-spacing:1.1px;text-transform:uppercase;color:var(--text);border-bottom:2px solid var(--brand-b);padding-bottom:8px;margin-bottom:12px}
+.fsec{margin-bottom:16px}
+.fsec h4{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin-bottom:7px}
+.fitem{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:4px 2px;cursor:pointer;color:var(--body)}
+.fitem input{accent-color:var(--brand-b);width:14px;height:14px}
+.reset{font-size:11.5px;color:#118DFF;cursor:pointer;text-decoration:underline}
+.dd{position:relative}
+.ddbtn{width:100%;text-align:left;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--soft);color:var(--text);font-size:12.5px;font-weight:600;cursor:pointer}
+.ddpanel{margin-top:6px;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--card);box-shadow:0 4px 14px var(--shadow)}
+.ddtools{display:flex;gap:12px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:6px}
+.ddtools span{font-size:11.5px;color:#118DFF;cursor:pointer;font-weight:600}
+.dlabel{display:block;font-size:11px;color:var(--muted);margin:7px 0 3px}
+.dinput{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;color:var(--text);background:var(--soft);font-family:inherit}
+.toolbtn{width:100%;text-align:left;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--soft);color:var(--text);font-size:12.5px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.toolbtn:hover{border-color:var(--brand-b)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px 8px;box-shadow:0 2px 10px var(--shadow);position:relative;min-width:0}
+.kpi .ic{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
+.kpi .l{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600}
+.kpi .v{font-size:clamp(14px,1.3vw,20px);font-weight:800;margin:5px 0 5px;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;line-height:1.2}
+.chip{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.chip.g{background:#DCF5E5;color:#15803D}.chip.r{background:#FDE3E3;color:#DC2626}.chip.n{background:var(--soft2);color:var(--muted)}
+.chip.b{background:#DBEAFE;color:#1D4ED8}.chip.y{background:#FEF3C7;color:#B45309}
+[data-theme="dark"] .chip.g{background:#123B25;color:#4ADE80}
+[data-theme="dark"] .chip.r{background:#3D1A1A;color:#F87171}
+[data-theme="dark"] .chip.b{background:#16294D;color:#7FB0FF}
+[data-theme="dark"] .chip.y{background:#3A2E12;color:#FCD34D}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.grid>*{min-width:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 2px 10px var(--shadow);min-width:0;overflow-x:auto}
+.card h3{font-size:13.5px;font-weight:700}
+.card h3 i{font-style:normal;color:var(--brand-b);margin-right:6px}
+.card .s{font-size:11px;color:var(--faint);margin:2px 0 10px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s12{grid-column:span 12}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;padding:7px 8px;border-bottom:2px solid var(--border);background:var(--soft);position:sticky;top:0}
+td{padding:7.5px 8px;border-bottom:1px solid var(--border);color:var(--body)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:800;color:var(--text);background:#EFFAF3;border-top:2px solid var(--brand-b)}
+[data-theme="dark"] tr.tot td{background:#0E2A26}
+.tblscroll{max-height:560px;overflow:auto}
+.leg{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:9px}
+.leg div{font-size:11px;color:var(--muted);display:flex;gap:5px;align-items:center}
+.leg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.nav div{background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;padding:13px 6px;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--text);box-shadow:0 2px 10px var(--shadow)}
+.nav div span{color:var(--brand-b);margin-right:7px}
+.nav div.act{background:linear-gradient(135deg,#006666,#0E8A8A);color:#fff;border-color:#006666}
+.nav div.act span{color:#fff}
+.foot{text-align:center;color:var(--faint);font-size:11px;margin-top:14px}
+.kpi.click{cursor:pointer}
+.kpi.click:hover{border-color:var(--brand-b)}
+.cpmodal{position:fixed;inset:0;background:var(--bg);z-index:50;overflow:auto}
+.cphead{background:var(--card);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cphead h2{font-size:17px}
+.cphead span{font-size:12px;color:var(--muted);display:block;margin-top:3px}
+.cpbtn{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--soft);color:var(--text);font-size:12.5px;font-weight:700;cursor:pointer}
+.cpbtn.pri{background:var(--brand);color:#fff;border-color:var(--brand)}
+.cpmsg{padding:10px 18px;font-size:13px;display:none}
+.cpmsg.ok{color:#15803D;display:block}.cpmsg.err{color:#DC2626;display:block}
+.cpset{background:var(--card);border-bottom:1px solid var(--border);padding:14px 18px;font-size:12.5px;color:var(--body)}
+.cpset p{margin-bottom:10px;line-height:1.5}
+.cpbody{padding:16px 18px}
+.efgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.efgrid label{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+.efinput{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:var(--soft);font-family:inherit}
+@media print{
+  body{background:#fff !important}
+  body > *{display:none !important}
+  body > .app{display:block !important}
+  .app > *:not(#cpModal){display:none !important}
+  #cpModal{display:block !important;position:static !important;overflow:visible !important;background:#fff !important}
+  #cpModal .cphead{background:#fff !important}
+  #cpModal .cphead .cpbtn, #cpModal #cpTabs, #cpModal .cpset, #cpModal #cpMsg, #cpModal #cpEditForm{display:none !important}
+  #cpModal #cpTable, #cpModal #cpTable div{max-height:none !important;overflow:visible !important}
+  #cpModal #cpChips .cpbtn{background:none !important;border:0 !important;padding:2px 4px !important;color:#000 !important}
+  #cpModal th{background:#eee !important;color:#000 !important}
+  #cpModal td, #cpModal h2{color:#000 !important}
+  #cpModal #cpTotals{color:#333 !important}
+  #cpModal #cpPrintFoot{display:block !important;font-size:11px;color:#666;margin-top:12px}
+}
+.view{display:none}
+.view.on{display:block}
+.nav div{cursor:pointer;user-select:none}
+.nav div:hover{border-color:var(--brand-b)}
+.insight{display:flex;gap:12px;padding:13px 14px;border:1px solid var(--border);border-radius:12px;background:var(--soft);margin-bottom:10px}
+.insight .ii{font-size:20px;line-height:1.2}
+.insight h4{font-size:13px;margin-bottom:2px;color:var(--text)}
+.insight p{font-size:12px;color:var(--muted);line-height:1.5}
+.insight b{color:var(--text)}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}.s3,.s4,.s6,.s12{grid-column:span 12}}
+@media(max-width:680px){body{padding:8px}.kpis{grid-template-columns:repeat(2,1fr);gap:9px}.nav{grid-template-columns:repeat(4,1fr);gap:9px}.topbar{flex-wrap:wrap;gap:10px;padding:12px 14px}.brand h1{font-size:16px}.logoimg{height:42px}.side{position:static}.card{padding:13px 12px}.kpi{padding:11px 12px 6px}}
+@media(max-width:380px){.kpi .v{font-size:13px}.nav div{font-size:10.5px;padding:11px 3px}}
+</style></head><body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><img class="logoimg" src="data:image/png;base64,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" alt="Dekko Isho Group">
+      <div><h1 data-th="brandTitle"></h1><p data-t="brandSub"></p></div>
+    </div>
+    <div class="live">
+    <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center">
+    <button id="btnRefresh" onclick="refreshLive(true)" style="background:var(--brand);color:#fff;border:0;border-radius:8px;padding:8px 18px;font-size:12.5px;font-weight:700;cursor:pointer" data-t="refreshBtn"></button>
+    </div>
+    <div id="liveStatus" style="margin-top:5px;font-size:11px"></div></div>
+  </div>
+  <div class="layout">
+    <aside class="side">
+      <h3 data-t="filters"></h3>
+      <div class="fsec"><h4 data-t="unitH"></h4>
+        <div class="dd"><button type="button" class="ddbtn" id="ddUnitBtn" onclick="toggleDD('Unit',event)">All units ▾</button>
+          <div class="ddpanel" id="ddUnitPanel" style="display:none">
+            <div class="ddtools"><span onclick="pickAll('U',true)" data-t="selectAll"></span><span onclick="pickAll('U',false)" data-t="clear"></span></div>
+            <div id="fUnits"></div>
+          </div></div>
+      </div>
+      <div class="fsec"><h4 data-t="lineH"></h4>
+        <select id="selLine" class="dinput" onchange="setLine(this.value)"></select>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px" data-t="lineHint"></div>
+      </div>
+      <div class="fsec"><h4 data-t="typeH"></h4>
+        <div class="dd"><button type="button" class="ddbtn" id="ddTypeBtn" onclick="toggleDD('Type',event)">All machine types ▾</button>
+          <div class="ddpanel" id="ddTypePanel" style="display:none">
+            <div class="ddtools"><span onclick="pickAll('T',true)" data-t="selectAll"></span><span onclick="pickAll('T',false)" data-t="clear"></span></div>
+            <input type="text" id="fTypeSearch" class="dinput" data-t-ph="typeSearchPh" oninput="buildTypeList()">
+            <div id="fTypes" style="max-height:280px;overflow:auto;margin-top:6px"></div>
+          </div></div>
+      </div>
+      <div class="fsec"><h4 data-t="searchH"></h4>
+        <input type="text" id="qSearch" class="dinput" data-t-ph="searchPh" oninput="render()">
+      </div>
+      <span class="reset" onclick="resetAll()" data-t="resetAll"></span>
+      <div class="fsec" style="margin-top:16px"><h4 data-t="tools"></h4>
+        <button id="btnLang" class="toolbtn" onclick="toggleLang()">🌐 বাংলা</button>
+        <button id="btnMode" class="toolbtn" onclick="toggleMode()">🌙 Dark</button>
+      </div>
+    </aside>
+    <main>
+      <div id="view-ov" class="view on">
+      <section class="kpis" id="kpis"></section>
+      <div id="lineNote" style="display:none;margin:-4px 0 14px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:12.5px;color:var(--body)"></div>
+      <section class="grid">
+        <div class="card s4"><h3><i>◔</i><span data-t="ovDonutT"></span></h3><div class="s" data-t="ovDonutS"></div><div id="chDonut"></div></div>
+        <div class="card s4"><h3><i>▬</i><span data-t="ovUnitT"></span></h3><div class="s" data-t="ovUnitS"></div><div id="chBarUnit"></div></div>
+        <div class="card s4"><h3><i>▬</i><span data-t="ovIdleT"></span></h3><div class="s" data-t="ovIdleS"></div><div id="chBarIdle"></div></div>
+        <div class="card s6"><h3><i>⚡</i><span data-t="ovInsT"></span></h3><div class="s" data-t="ovInsS"></div><div id="insights"></div></div>
+        <div class="card s6"><h3><i>★</i><span data-t="ovTopT"></span></h3><div class="s" data-t="ovTopS"></div><div id="tblTop"></div></div>
+        <div class="card s12"><h3><i>⚖</i><span data-t="ovDualT"></span></h3><div class="s" data-t="ovDualS"></div><div id="chDual"></div></div>
+      </section>
+      </div>
+      <div id="view-list" class="view">
+        <section class="grid">
+          <div class="card s12"><h3><i>▤</i><span data-t="detT"></span></h3><div class="s" id="tblListSub"></div><div id="detChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div><div class="tblscroll" id="tblList"></div></div>
+        </section>
+      </div>
+      <div id="view-unit" class="view">
+        <section class="grid">
+          <div class="card s12"><h3><i>▤</i><span data-t="unitT"></span></h3><div class="s" data-t="unitS"></div><div id="tblUnit"></div></div>
+          <div class="card s6"><h3><i>▬</i><span data-t="unitRentT"></span></h3><div class="s" data-t="unitRentS"></div><div id="chBarRent"></div></div>
+          <div class="card s6"><h3><i>◔</i><span data-t="unitShareT"></span></h3><div class="s" data-t="unitShareS"></div><div id="chDonutUnit"></div></div>
+        </section>
+      </div>
+      <div id="view-rent" class="view">
+        <section class="kpis" id="rentKpis"></section>
+        <div id="rentLineNote" style="display:none;margin:-4px 0 14px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:12.5px;color:var(--body)"></div>
+        <section class="grid">
+          <div class="card s6"><h3><i>▬</i><span data-t="rentByUnitT"></span></h3><div class="s" data-t="rentByUnitS"></div><div id="rentBarUnit"></div></div>
+          <div class="card s6"><h3><i>★</i><span data-t="rentTopT"></span></h3><div class="s" data-t="rentTopS"></div><div id="rentTop"></div></div>
+          <div class="card s12"><h3><i>▤</i><span data-t="rentListT"></span></h3><div class="s" data-t="rentListS"></div><div class="tblscroll" id="rentList"></div></div>
+          <div class="card s12"><h3><i>▤</i><span data-t="rentUnitT"></span></h3><div class="s" data-t="rentUnitS"></div><div id="rentUnit"></div></div>
+          <div class="card s12"><h3><i>▦</i><span data-t="rentDayCalT"></span></h3><div class="s" data-t="rentDayCalS"></div>
+            <div id="rentDayCal"></div><div id="rentDayDetail" style="margin-top:12px"></div>
+            <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+              <h4 style="font-size:13px;margin-bottom:8px" data-t="logFormT"></h4>
+              <div class="efgrid">
+                <div><label data-t="logDateL"></label><input type="date" id="logDate" class="efinput"></div>
+                <div><label data-t="logUnitL"></label><select id="logUnit" class="efinput"></select></div>
+                <div style="grid-column:span 2"><label data-t="logTypeL"></label><select id="logType" class="efinput"></select></div>
+                <div><label data-t="logCountL"></label><input type="number" step="any" min="0" id="logCount" class="efinput"></div>
+                <div style="grid-column:span 2"><label data-t="logRemarksL"></label><input type="text" id="logRemarks" class="efinput"></div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <button class="cpbtn pri" id="logSaveBtn" onclick="saveRentLog()" data-t="logSaveBtn"></button>
+                <span id="logMsg" style="font-size:12px"></span>
+              </div>
+            </div>
+          </div>
+          <div class="card s12"><h3><i>▦</i><span data-t="rentCalT"></span></h3><div class="s" data-t="rentCalS"></div><div id="rentCal"></div><div id="rentCalDetail" style="margin-top:12px"></div></div>
+          <div class="card s12"><h3><i>▤</i><span data-t="rentTabT"></span></h3><div class="s" data-t="rentTabS"></div><div style="overflow:auto" id="rentTab"></div></div>
+        </section>
+      </div>
+      <div class="nav">
+        <div id="nav-ov" class="act" onclick="switchView('ov')"><span>▦</span><span data-t="navOv"></span></div>
+        <div id="nav-list" onclick="switchView('list')"><span>▤</span><span data-t="navList"></span></div>
+        <div id="nav-unit" onclick="switchView('unit')"><span>⬢</span><span data-t="navUnit"></span></div>
+        <div id="nav-rent" onclick="switchView('rent')"><span>↔</span><span data-t="navRent"></span></div>
+      </div>
+      <div class="foot" data-t="foot"></div>
+    </main>
+  </div>
+  <div id="cpModal" class="cpmodal" style="display:none">
+    <div class="cphead">
+      <div><h2 id="cpTitle">—</h2><span id="cpTotals"></span></div>
+      <div style="flex:1"></div>
+      <button class="cpbtn" onclick="toggleCpSettings()" data-t="cpSetup"></button>
+      <button class="cpbtn" onclick="cpPrint()">📄 PDF</button>
+      <button class="cpbtn" onclick="closeCardPopup()" data-t="cpClose"></button>
+    </div>
+    <div id="cpTabs" style="background:var(--card);border-bottom:1px solid var(--border);padding:8px 18px;display:flex;gap:8px">
+      <button id="cpTabList" class="cpbtn pri" onclick="cpSetTab('list')" data-t="cpList"></button>
+      <button id="cpTabEdit" class="cpbtn" onclick="cpSetTab('edit')" data-t="cpEdit"></button>
+    </div>
+    <div id="cpMsg" class="cpmsg"></div>
+    <div id="cpSettings" class="cpset" style="display:none">
+      <p data-t="cpSetupH"></p>
+      <div class="efgrid">
+        <div style="grid-column:span 3"><label data-t="cpUrlL"></label><input id="cpUrl" class="efinput"></div>
+        <div><label data-t="cpPassL"></label><input id="cpToken" type="password" class="efinput"></div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:14px;align-items:center">
+        <label style="font-size:12px"><input type="checkbox" id="cpRemember" checked> <span data-t="cpRemember"></span></label>
+        <button class="cpbtn pri" onclick="cpSaveSetup()" data-t="cpSaveSetup"></button>
+      </div>
+    </div>
+    <div class="cpbody"><div id="cpChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div><div style="overflow:auto" id="cpTable"></div>
+    <div id="cpPrintFoot" style="display:none"></div>
+    <div id="cpEditForm" style="display:none;max-width:960px">
+      <h3 style="font-size:14px;margin-bottom:10px" data-t="cpEditH"></h3>
+      <div class="efgrid">
+        <div style="grid-column:span 2"><label data-t="cpTypeL"></label><select id="cpType" class="efinput"></select></div>
+        <div><label data-t="cpUnitL"></label><select id="cpUnit" class="efinput" onchange="cpBuildLineOpts()"></select></div>
+        <div><label data-t="cpTargetL"></label><select id="cpTarget" class="efinput" onchange="cpTargetChange()"><option value="unit" data-t="cpTargetUnit"></option><option value="line" data-t="cpTargetLine"></option></select></div>
+        <div id="cpFieldWrap"><label data-t="cpFieldL"></label><select id="cpField" class="efinput"><option value="run" data-t="thRun"></option><option value="rent" data-t="thRent"></option><option value="idle" data-t="thIdle"></option></select></div>
+        <div id="cpLineWrap" style="display:none"><label data-t="cpLineL"></label><select id="cpLine" class="efinput"></select></div>
+        <div><label data-t="cpValL"></label><input type="number" step="any" min="0" id="cpVal" class="efinput"></div>
+      </div>
+      <div style="margin-top:12px"><button class="cpbtn pri" id="cpSaveBtn" onclick="cpSave()" data-t="cpSaveBtn"></button></div>
+    </div></div>
+  </div>
+</div>
+<script>
+let D = {"rows": [{"sl": "01", "type": "SINGLE NEEDLE LOCK STITCH (AUTO)", "u": {"DGL-1": [1700.0, 5.0, 0.0], "DRL": [824.0, 0.0, 7.0], "DFL": [327.0, 0.0, 1.0], "GGL": [642.0, 17.0, 0.0], "AFL": [330.0, 20.0, 0.0], "DGL-2": [433.0, 41.0, 0.0]}, "ln": {"2": 34.0, "3": 27.0, "4": 32.0, "5": 27.0, "6": 30.0, "7": 31.0, "8": 29.0, "9": 40.0, "10": 29.0, "11": 33.0, "12": 40.0, "13": 26.0, "14": 33.0, "15": 29.0, "16": 23.0, "17": 30.0, "18": 32.0, "19": 30.0, "20": 27.0, "21": 32.0, "22": 40.0, "23": 37.0, "25": 8.0, "29": 699.0, "30": 51.0, "31": 34.0, "32": 31.0, "33": 37.0, "34": 30.0, "35": 36.0, "36": 32.0, "37": 22.0, "38": 38.0, "39": 34.0, "40": 33.0, "41": 25.0, "42": 29.0, "43": 34.0, "44": 34.0, "45": 32.0, "46": 32.0, "47": 34.0, "48": 31.0, "49": 32.0, "50": 22.0, "51": 44.0, "53": 3.0, "54": 5.0, "57": 735.0, "61": 34.0, "62": 27.0, "63": 32.0, "64": 32.0, "65": 30.0, "66": 2.0, "73": 157.0, "80": 109.0, "85": 26.0, "86": 26.0, "87": 33.0, "88": 31.0, "89": 28.0, "90": 26.0, "91": 26.0, "92": 38.0, "93": 34.0, "94": 25.0, "95": 28.0, "96": 28.0, "97": 29.0, "98": 28.0, "99": 25.0, "100": 26.0, "101": 33.0, "102": 27.0, "103": 29.0, "104": 24.0, "105": 32.0, "106": 26.0, "107": 28.0, "108": 31.0, "112": 19.0, "113": 47.0, "115": 71.0, "120": 31.0, "121": 27.0, "122": 30.0, "123": 26.0, "124": 30.0, "125": 27.0, "126": 30.0, "127": 29.0, "128": 26.0, "129": 22.0, "130": 2.0, "131": 13.0, "132": 34.0, "137": 30.0, "138": 33.0, "139": 27.0, "140": 30.0, "141": 26.0, "142": 32.0, "143": 28.0, "144": 31.0, "145": 40.0, "146": 30.0, "147": 30.0, "148": 25.0, "149": 22.0, "150": 25.0, "151": 29.0, "152": 36.0, "153": 22.0, "154": 24.0, "155": 31.0, "156": 33.0, "157": 18.0, "158": 23.0, "164": 26.0, "165": 28.0, "166": 30.0, "167": 35.0, "168": 30.0, "169": 32.0, "170": 32.0, "171": 35.0, "172": 25.0, "173": 31.0, "175": 5.0, "178": 1.0, "184": 23.0, "185": 21.0, "197": 44.0, "198": 33.0, "199": 23.0, "200": 28.0, "201": 37.0, "202": 35.0, "203": 33.0, "204": 31.0, "205": 34.0, "211": 254.0, "212": 30.0, "213": 35.0, "223": 41.0, "225": 106.0, "226": 20.0, "227": 9.0}, "rentAmt": 8300.0}, {"sl": "02", "type": "SINGLE NEEDLE LOCK STITCH (MANUAL)", "u": {"DGL-1": [4.0, 0.0, 0.0], "DRL": [36.0, 0.0, 15.0], "DFL": [22.0, 0.0, 5.0], "GGL": [9.0, 0.0, 85.0], "AFL": [15.0, 0.0, 3.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"61": 1.0, "73": 1.0, "80": 3.0, "85": 2.0, "87": 1.0, "90": 1.0, "91": 2.0, "93": 4.0, "94": 2.0, "95": 2.0, "97": 1.0, "99": 1.0, "100": 2.0, "115": 18.0, "121": 3.0, "122": 2.0, "123": 2.0, "124": 2.0, "125": 2.0, "126": 3.0, "127": 1.0, "128": 3.0, "129": 2.0, "130": 2.0, "137": 2.0, "138": 1.0, "140": 1.0, "141": 1.0, "146": 3.0, "155": 1.0, "164": 1.0, "165": 1.0, "166": 3.0, "167": 2.0, "168": 3.0, "169": 1.0, "172": 1.0, "173": 2.0, "179": 1.0}, "rentAmt": 0.0}, {"sl": "03", "type": "SINGLE NEEDLE LOCK STITCH ( NEEDLE FEED )", "u": {"DGL-1": [16.0, 0.0, 0.0], "DRL": [1.0, 0.0, 4.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 3.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [70.0, 0.0, 0.0]}, "ln": {"4": 2.0, "7": 1.0, "20": 2.0, "29": 5.0, "30": 2.0, "31": 1.0, "43": 1.0, "44": 1.0, "45": 1.0, "46": 1.0, "47": 1.0, "57": 8.0, "62": 1.0, "64": 1.0, "65": 1.0, "73": 3.0, "86": 1.0, "184": 10.0, "185": 6.0, "186": 13.0, "197": 29.0, "198": 2.0, "199": 6.0, "200": 4.0, "201": 2.0, "202": 2.0, "203": 1.0, "204": 1.0, "205": 3.0, "211": 21.0, "212": 10.0, "213": 10.0, "225": 20.0}, "rentAmt": 0.0}, {"sl": "04", "type": "SINGLE NEEDLE LOCK STITCH ( HEMMING )", "u": {"DGL-1": [3.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [18.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [12.0, 0.0, 0.0]}, "ln": {"65": 3.0, "73": 3.0, "131": 1.0, "137": 2.0, "139": 3.0, "140": 2.0, "143": 2.0, "145": 2.0, "146": 2.0, "147": 1.0, "155": 2.0, "156": 2.0, "198": 2.0, "199": 2.0, "200": 2.0, "203": 2.0, "204": 2.0, "205": 2.0, "211": 12.0}, "rentAmt": 0.0}, {"sl": "05", "type": "SINGLE NEEDLE LOCK STITCH ( TOP FEED )", "u": {"DGL-1": [15.0, 0.0, 2.0], "DRL": [6.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [2.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 27.0]}, "ln": {"34": 2.0, "39": 2.0, "41": 2.0, "42": 2.0, "44": 2.0, "45": 2.0, "55": 2.0, "57": 12.0, "62": 2.0, "65": 1.0, "73": 3.0, "97": 2.0, "101": 2.0, "102": 1.0, "108": 1.0, "148": 1.0, "150": 1.0}, "rentAmt": 0.0}, {"sl": "06", "type": "VERTICAL TRIMMER", "u": {"DGL-1": [138.0, 1.0, 6.0], "DRL": [77.0, 0.0, 8.0], "DFL": [22.0, 0.0, 1.0], "GGL": [63.0, 0.0, 0.0], "AFL": [8.0, 0.0, 5.0], "DGL-2": [44.0, 3.0, 2.0]}, "ln": {"2": 2.0, "3": 2.0, "5": 1.0, "6": 2.0, "8": 5.0, "10": 1.0, "11": 3.0, "15": 3.0, "16": 1.0, "18": 3.0, "19": 1.0, "20": 1.0, "21": 2.0, "26": 1.0, "29": 28.0, "30": 3.0, "31": 5.0, "32": 5.0, "33": 5.0, "34": 3.0, "35": 4.0, "36": 4.0, "37": 4.0, "38": 3.0, "39": 6.0, "40": 3.0, "41": 3.0, "42": 6.0, "43": 4.0, "44": 4.0, "45": 5.0, "46": 5.0, "47": 3.0, "48": 5.0, "49": 5.0, "51": 5.0, "55": 6.0, "57": 90.0, "61": 4.0, "62": 3.0, "63": 5.0, "64": 5.0, "65": 3.0, "73": 20.0, "85": 4.0, "86": 3.0, "87": 2.0, "88": 4.0, "89": 5.0, "90": 4.0, "91": 2.0, "92": 4.0, "93": 3.0, "94": 2.0, "95": 3.0, "96": 2.0, "97": 4.0, "98": 2.0, "99": 2.0, "100": 2.0, "101": 3.0, "102": 4.0, "103": 3.0, "104": 3.0, "105": 3.0, "106": 4.0, "107": 3.0, "108": 3.0, "113": 3.0, "120": 4.0, "125": 4.0, "126": 2.0, "127": 4.0, "128": 2.0, "129": 5.0, "132": 1.0, "137": 6.0, "138": 4.0, "139": 4.0, "140": 4.0, "141": 5.0, "142": 6.0, "143": 4.0, "144": 4.0, "145": 3.0, "146": 4.0, "147": 3.0, "148": 5.0, "152": 1.0, "154": 1.0, "155": 3.0, "156": 3.0, "157": 1.0, "158": 2.0, "164": 2.0, "165": 2.0, "166": 1.0, "168": 2.0, "171": 1.0, "184": 1.0, "197": 1.0, "198": 6.0, "199": 5.0, "200": 5.0, "201": 5.0, "203": 4.0, "204": 5.0, "205": 3.0, "210": 2.0, "211": 33.0, "212": 3.0, "213": 3.0, "223": 3.0, "225": 9.0, "226": 1.0}, "rentAmt": 400.0}, {"sl": "07", "type": "VERTICAL TRIMMER ( NEEDLE FEED )", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [25.0, 0.0, 0.0]}, "ln": {"184": 3.0, "185": 5.0, "197": 8.0, "212": 3.0, "213": 4.0, "222": 10.0, "225": 17.0}, "rentAmt": 0.0}, {"sl": "08", "type": "OVER LOCK (4TH)", "u": {"DGL-1": [78.0, 10.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [6.0, 0.0, 0.0], "AFL": [13.0, 0.0, 0.0], "DGL-2": [30.0, 0.0, 27.0]}, "ln": {"2": 4.0, "3": 3.0, "4": 2.0, "5": 3.0, "6": 1.0, "7": 2.0, "8": 2.0, "9": 3.0, "10": 2.0, "11": 3.0, "12": 3.0, "13": 2.0, "14": 1.0, "15": 2.0, "16": 3.0, "17": 1.0, "18": 3.0, "19": 2.0, "20": 1.0, "21": 2.0, "23": 4.0, "29": 49.0, "30": 2.0, "31": 2.0, "32": 1.0, "34": 1.0, "35": 1.0, "36": 1.0, "37": 1.0, "39": 1.0, "40": 1.0, "43": 1.0, "47": 1.0, "48": 1.0, "51": 2.0, "54": 10.0, "57": 26.0, "80": 3.0, "113": 1.0, "115": 2.0, "144": 1.0, "146": 1.0, "152": 1.0, "153": 2.0, "154": 1.0, "164": 1.0, "165": 2.0, "166": 1.0, "168": 1.0, "169": 5.0, "170": 1.0, "171": 1.0, "172": 1.0, "185": 1.0, "186": 5.0, "197": 6.0, "198": 4.0, "199": 2.0, "200": 2.0, "201": 2.0, "202": 3.0, "203": 2.0, "204": 2.0, "205": 1.0, "211": 18.0, "212": 4.0, "213": 1.0, "225": 5.0, "226": 1.0}, "rentAmt": 1000.0}, {"sl": "09", "type": "OVER LOCK (5TH)", "u": {"DGL-1": [203.0, 11.0, 4.0], "DRL": [174.0, 7.0, 0.0], "DFL": [33.0, 0.0, 0.0], "GGL": [118.0, 4.0, 0.0], "AFL": [95.0, 13.0, 2.0], "DGL-2": [26.0, 3.0, 2.0]}, "ln": {"2": 5.0, "3": 3.0, "5": 3.0, "6": 4.0, "7": 6.0, "8": 5.0, "9": 5.0, "10": 2.0, "11": 6.0, "13": 2.0, "14": 4.0, "15": 7.0, "16": 4.0, "17": 4.0, "18": 1.0, "19": 4.0, "20": 3.0, "21": 7.0, "23": 4.0, "25": 1.0, "27": 4.0, "29": 80.0, "30": 3.0, "31": 5.0, "32": 5.0, "33": 4.0, "34": 5.0, "35": 5.0, "36": 5.0, "37": 4.0, "38": 5.0, "39": 4.0, "40": 5.0, "41": 4.0, "42": 5.0, "44": 3.0, "45": 2.0, "47": 1.0, "48": 5.0, "49": 5.0, "50": 1.0, "51": 4.0, "54": 11.0, "57": 91.0, "61": 5.0, "62": 6.0, "63": 3.0, "64": 3.0, "65": 3.0, "73": 20.0, "80": 12.0, "85": 6.0, "86": 8.0, "87": 6.0, "88": 3.0, "89": 7.0, "90": 3.0, "91": 5.0, "92": 7.0, "93": 6.0, "94": 8.0, "95": 7.0, "96": 7.0, "97": 7.0, "98": 7.0, "99": 8.0, "100": 10.0, "101": 7.0, "102": 6.0, "103": 7.0, "104": 5.0, "105": 6.0, "106": 5.0, "107": 5.0, "108": 5.0, "112": 1.0, "113": 8.0, "115": 7.0, "120": 6.0, "121": 2.0, "122": 1.0, "124": 4.0, "125": 3.0, "126": 5.0, "127": 3.0, "128": 1.0, "129": 2.0, "131": 3.0, "132": 3.0, "137": 4.0, "138": 5.0, "139": 6.0, "140": 5.0, "141": 2.0, "142": 5.0, "143": 4.0, "144": 5.0, "145": 11.0, "146": 6.0, "147": 5.0, "148": 3.0, "149": 7.0, "150": 10.0, "151": 7.0, "152": 8.0, "153": 5.0, "154": 8.0, "155": 8.0, "164": 8.0, "165": 5.0, "166": 10.0, "167": 10.0, "168": 9.0, "169": 10.0, "170": 8.0, "171": 6.0, "172": 8.0, "173": 7.0, "178": 1.0, "184": 5.0, "185": 4.0, "197": 9.0, "198": 1.0, "199": 4.0, "201": 1.0, "203": 1.0, "205": 3.0, "210": 2.0, "211": 10.0, "212": 1.0, "213": 2.0, "223": 3.0, "225": 6.0, "226": 1.0}, "rentAmt": 3800.0}, {"sl": "10", "type": "OVER LOCK (6TH)", "u": {"DGL-1": [33.0, 0.0, 2.0], "DRL": [5.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [25.0, 0.0, 0.0]}, "ln": {"3": 2.0, "4": 5.0, "5": 1.0, "9": 1.0, "10": 3.0, "12": 5.0, "13": 2.0, "14": 1.0, "16": 1.0, "17": 2.0, "18": 5.0, "20": 2.0, "23": 2.0, "27": 2.0, "29": 32.0, "80": 1.0, "88": 1.0, "104": 1.0, "105": 1.0, "107": 1.0, "113": 1.0, "185": 2.0, "197": 2.0, "200": 4.0, "201": 2.0, "202": 3.0, "203": 3.0, "204": 3.0, "205": 2.0, "211": 17.0, "212": 5.0, "213": 1.0, "225": 6.0}, "rentAmt": 0.0}, {"sl": "11", "type": "OVER LOCK (SHELL STITCH)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "12", "type": "TWO NEEDLE LOCK STITCH (ANGULAR)", "u": {"DGL-1": [26.0, 0.0, 3.0], "DRL": [20.0, 0.0, 4.0], "DFL": [3.0, 0.0, 3.0], "GGL": [24.0, 0.0, 5.0], "AFL": [25.0, 0.0, 10.0], "DGL-2": [12.0, 0.0, 7.0]}, "ln": {"3": 2.0, "4": 1.0, "8": 3.0, "10": 4.0, "13": 3.0, "14": 1.0, "16": 2.0, "17": 3.0, "19": 4.0, "20": 3.0, "29": 26.0, "55": 3.0, "85": 1.0, "86": 9.0, "87": 2.0, "104": 2.0, "105": 2.0, "113": 2.0, "115": 2.0, "120": 3.0, "138": 2.0, "139": 2.0, "143": 3.0, "146": 1.0, "148": 4.0, "149": 4.0, "151": 4.0, "152": 2.0, "154": 2.0, "164": 2.0, "165": 3.0, "166": 4.0, "167": 2.0, "168": 4.0, "169": 2.0, "170": 1.0, "171": 1.0, "172": 2.0, "173": 4.0, "184": 1.0, "185": 1.0, "186": 5.0, "197": 7.0, "210": 3.0, "212": 2.0, "213": 2.0, "225": 4.0, "226": 1.0}, "rentAmt": 0.0}, {"sl": "13", "type": "TWO NEEDLE LOCK STITCH (FIXED-BAR)", "u": {"DGL-1": [42.0, 0.0, 3.0], "DRL": [17.0, 0.0, 24.0], "DFL": [1.0, 0.0, 0.0], "GGL": [21.0, 0.0, 10.0], "AFL": [6.0, 0.0, 8.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"2": 4.0, "3": 2.0, "5": 1.0, "7": 2.0, "8": 1.0, "9": 1.0, "10": 1.0, "13": 4.0, "14": 3.0, "16": 2.0, "17": 5.0, "20": 1.0, "21": 1.0, "23": 4.0, "29": 32.0, "30": 1.0, "37": 3.0, "41": 1.0, "51": 1.0, "55": 3.0, "57": 6.0, "80": 4.0, "85": 1.0, "86": 2.0, "87": 3.0, "90": 2.0, "93": 2.0, "94": 2.0, "96": 1.0, "98": 1.0, "99": 1.0, "113": 2.0, "131": 1.0, "137": 1.0, "138": 1.0, "139": 2.0, "141": 2.0, "143": 1.0, "146": 1.0, "148": 1.0, "150": 2.0, "151": 2.0, "152": 2.0, "153": 2.0, "154": 4.0, "164": 1.0, "165": 1.0, "167": 1.0, "168": 1.0, "170": 1.0, "172": 1.0, "213": 3.0, "225": 3.0}, "rentAmt": 0.0}, {"sl": "14", "type": "FEED OFF THE ARM (HEAVY)", "u": {"DGL-1": [35.0, 5.0, 5.0], "DRL": [5.0, 0.0, 8.0], "DFL": [0.0, 0.0, 0.0], "GGL": [18.0, 0.0, 2.0], "AFL": [5.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 2.0]}, "ln": {"2": 2.0, "3": 3.0, "8": 1.0, "10": 2.0, "16": 3.0, "23": 2.0, "27": 2.0, "29": 13.0, "37": 1.0, "40": 3.0, "41": 2.0, "54": 5.0, "55": 3.0, "57": 11.0, "61": 2.0, "64": 3.0, "73": 5.0, "80": 6.0, "93": 2.0, "113": 1.0, "115": 2.0, "141": 2.0, "148": 1.0, "149": 3.0, "150": 3.0, "151": 2.0, "152": 1.0, "153": 3.0, "154": 2.0, "158": 1.0, "168": 3.0, "172": 2.0, "210": 2.0}, "rentAmt": 1250.0}, {"sl": "15", "type": "FEED OFF THE ARM (LIGHT)", "u": {"DGL-1": [84.0, 18.0, 4.0], "DRL": [55.0, 0.0, 14.0], "DFL": [19.0, 0.0, 0.0], "GGL": [34.0, 0.0, 1.0], "AFL": [7.0, 0.0, 0.0], "DGL-2": [28.0, 0.0, 0.0]}, "ln": {"7": 2.0, "13": 1.0, "14": 5.0, "19": 2.0, "20": 1.0, "23": 2.0, "26": 16.0, "29": 29.0, "31": 2.0, "32": 2.0, "33": 2.0, "34": 2.0, "35": 2.0, "37": 1.0, "39": 2.0, "40": 2.0, "41": 1.0, "42": 3.0, "43": 3.0, "44": 2.0, "45": 2.0, "46": 2.0, "47": 2.0, "48": 2.0, "49": 2.0, "50": 2.0, "51": 4.0, "54": 1.0, "55": 4.0, "57": 41.0, "61": 2.0, "62": 2.0, "63": 2.0, "64": 1.0, "65": 2.0, "70": 1.0, "73": 10.0, "80": 4.0, "85": 4.0, "88": 2.0, "89": 2.0, "90": 3.0, "91": 2.0, "94": 3.0, "95": 2.0, "96": 4.0, "97": 3.0, "98": 2.0, "99": 2.0, "100": 2.0, "101": 4.0, "102": 2.0, "103": 3.0, "104": 4.0, "105": 2.0, "106": 2.0, "112": 2.0, "113": 2.0, "115": 3.0, "121": 2.0, "122": 2.0, "123": 2.0, "124": 2.0, "125": 2.0, "127": 2.0, "128": 2.0, "129": 2.0, "131": 1.0, "132": 2.0, "137": 3.0, "138": 2.0, "139": 3.0, "140": 2.0, "141": 3.0, "142": 2.0, "143": 3.0, "144": 3.0, "145": 2.0, "146": 2.0, "147": 2.0, "148": 4.0, "155": 1.0, "158": 2.0, "172": 7.0, "184": 2.0, "185": 1.0, "197": 3.0, "198": 2.0, "199": 2.0, "201": 2.0, "202": 2.0, "203": 2.0, "204": 2.0, "205": 2.0, "211": 14.0, "212": 5.0, "213": 5.0, "225": 10.0, "226": 1.0}, "rentAmt": 4500.0}, {"sl": "16", "type": "BUTTON HOLE", "u": {"DGL-1": [86.0, 1.0, 6.0], "DRL": [71.0, 0.0, 12.0], "DFL": [28.0, 0.0, 1.0], "GGL": [48.0, 0.0, 1.0], "AFL": [10.0, 3.0, 0.0], "DGL-2": [28.0, 0.0, 0.0]}, "ln": {"2": 1.0, "3": 1.0, "4": 1.0, "6": 1.0, "7": 1.0, "8": 1.0, "11": 2.0, "12": 1.0, "13": 1.0, "14": 2.0, "17": 1.0, "18": 1.0, "19": 2.0, "20": 2.0, "23": 1.0, "26": 1.0, "29": 20.0, "31": 4.0, "32": 4.0, "33": 4.0, "34": 4.0, "38": 2.0, "39": 2.0, "40": 1.0, "41": 4.0, "42": 2.0, "43": 4.0, "44": 4.0, "45": 4.0, "46": 3.0, "47": 3.0, "48": 4.0, "49": 3.0, "51": 2.0, "55": 6.0, "57": 54.0, "61": 1.0, "63": 3.0, "64": 3.0, "65": 3.0, "73": 10.0, "80": 2.0, "85": 4.0, "86": 1.0, "87": 2.0, "88": 4.0, "89": 3.0, "90": 4.0, "91": 4.0, "92": 3.0, "93": 3.0, "94": 2.0, "95": 3.0, "96": 3.0, "97": 3.0, "98": 3.0, "99": 3.0, "100": 2.0, "101": 3.0, "102": 3.0, "103": 2.0, "104": 3.0, "105": 3.0, "106": 2.0, "108": 3.0, "113": 2.0, "115": 3.0, "121": 3.0, "122": 3.0, "123": 4.0, "124": 3.0, "125": 1.0, "126": 3.0, "127": 2.0, "128": 3.0, "129": 3.0, "131": 1.0, "132": 2.0, "137": 4.0, "138": 3.0, "139": 3.0, "140": 4.0, "141": 3.0, "142": 3.0, "143": 3.0, "144": 2.0, "145": 1.0, "146": 4.0, "147": 3.0, "148": 4.0, "149": 1.0, "150": 1.0, "151": 1.0, "152": 2.0, "153": 1.0, "154": 1.0, "155": 3.0, "158": 1.0, "166": 1.0, "168": 1.0, "169": 1.0, "170": 1.0, "171": 1.0, "172": 2.0, "184": 2.0, "197": 2.0, "198": 3.0, "199": 3.0, "200": 3.0, "201": 2.0, "202": 2.0, "203": 4.0, "204": 3.0, "205": 3.0, "211": 23.0, "212": 1.0, "213": 1.0, "225": 2.0, "226": 1.0}, "rentAmt": 1200.0}, {"sl": "17", "type": "BUTTON HOLE INDEXER", "u": {"DGL-1": [3.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 1.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"62": 3.0, "73": 3.0, "194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "18", "type": "CHAIN STITCH (1N)", "u": {"DGL-1": [35.0, 0.0, 5.0], "DRL": [31.0, 0.0, 1.0], "DFL": [42.0, 8.0, 0.0], "GGL": [24.0, 0.0, 0.0], "AFL": [5.0, 0.0, 0.0], "DGL-2": [10.0, 0.0, 0.0]}, "ln": {"2": 1.0, "4": 1.0, "5": 1.0, "10": 1.0, "15": 1.0, "16": 1.0, "18": 1.0, "23": 4.0, "29": 11.0, "31": 2.0, "32": 3.0, "33": 1.0, "35": 2.0, "40": 2.0, "48": 1.0, "51": 6.0, "55": 5.0, "57": 17.0, "80": 7.0, "85": 2.0, "86": 2.0, "88": 2.0, "89": 2.0, "90": 1.0, "91": 2.0, "93": 3.0, "94": 2.0, "95": 2.0, "98": 3.0, "99": 1.0, "101": 1.0, "113": 1.0, "115": 7.0, "120": 4.0, "121": 4.0, "122": 5.0, "123": 5.0, "124": 5.0, "128": 4.0, "129": 3.0, "131": 1.0, "132": 3.0, "137": 5.0, "138": 1.0, "139": 3.0, "140": 1.0, "141": 1.0, "142": 2.0, "143": 3.0, "144": 1.0, "147": 2.0, "149": 1.0, "153": 2.0, "158": 2.0, "164": 3.0, "165": 1.0, "171": 1.0, "184": 1.0, "185": 2.0, "197": 3.0, "200": 2.0, "201": 1.0, "211": 3.0, "212": 1.0, "213": 2.0, "225": 3.0, "226": 1.0}, "rentAmt": 800.0}, {"sl": "19", "type": "CHAIN STITCH (2N)", "u": {"DGL-1": [116.0, 32.0, 2.0], "DRL": [32.0, 0.0, 6.0], "DFL": [14.0, 6.0, 0.0], "GGL": [30.0, 2.0, 0.0], "AFL": [3.0, 0.0, 2.0], "DGL-2": [25.0, 0.0, 0.0]}, "ln": {"3": 2.0, "7": 1.0, "9": 1.0, "16": 1.0, "23": 2.0, "26": 3.0, "29": 10.0, "31": 4.0, "32": 3.0, "33": 3.0, "38": 2.0, "41": 2.0, "42": 3.0, "43": 6.0, "44": 4.0, "45": 4.0, "46": 5.0, "47": 4.0, "48": 4.0, "49": 5.0, "50": 2.0, "51": 2.0, "54": 29.0, "55": 2.0, "57": 82.0, "61": 2.0, "62": 4.0, "63": 4.0, "64": 4.0, "65": 4.0, "73": 18.0, "80": 6.0, "90": 2.0, "94": 2.0, "96": 2.0, "97": 2.0, "99": 2.0, "100": 2.0, "101": 3.0, "102": 2.0, "103": 2.0, "104": 2.0, "105": 2.0, "106": 2.0, "108": 1.0, "112": 1.0, "113": 3.0, "115": 2.0, "125": 3.0, "129": 2.0, "131": 1.0, "132": 2.0, "137": 1.0, "138": 1.0, "139": 3.0, "140": 1.0, "141": 3.0, "142": 3.0, "143": 3.0, "144": 5.0, "145": 1.0, "147": 3.0, "148": 2.0, "149": 1.0, "158": 1.0, "164": 1.0, "168": 1.0, "171": 1.0, "184": 3.0, "185": 1.0, "197": 4.0, "198": 2.0, "199": 3.0, "201": 1.0, "202": 2.0, "203": 2.0, "204": 2.0, "205": 3.0, "211": 15.0, "212": 3.0, "213": 2.0, "225": 5.0, "226": 1.0}, "rentAmt": 4000.0}, {"sl": "20", "type": "CHAIN STITCH (3N)", "u": {"DGL-1": [2.0, 0.0, 5.0], "DRL": [2.0, 0.0, 10.0], "DFL": [0.0, 0.0, 2.0], "GGL": [7.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"51": 1.0, "55": 5.0, "57": 1.0, "80": 1.0, "115": 2.0, "140": 1.0, "141": 2.0, "142": 3.0, "153": 1.0}, "rentAmt": 0.0}, {"sl": "21", "type": "BUTTON STITCH/ATTACH", "u": {"DGL-1": [103.0, 0.0, 0.0], "DRL": [69.0, 0.0, 4.0], "DFL": [37.0, 0.0, 0.0], "GGL": [51.0, 0.0, 0.0], "AFL": [9.0, 0.0, 0.0], "DGL-2": [18.0, 0.0, 0.0]}, "ln": {"22": 27.0, "23": 2.0, "29": 29.0, "50": 60.0, "57": 60.0, "66": 12.0, "73": 12.0, "80": 2.0, "112": 67.0, "115": 2.0, "130": 35.0, "132": 2.0, "149": 1.0, "150": 1.0, "152": 1.0, "153": 1.0, "154": 1.0, "157": 45.0, "158": 1.0, "175": 9.0, "184": 1.0, "197": 1.0, "207": 16.0, "211": 16.0, "226": 1.0}, "rentAmt": 0.0}, {"sl": "22", "type": "BARTAKING", "u": {"DGL-1": [90.0, 8.0, 0.0], "DRL": [22.0, 0.0, 3.0], "DFL": [6.0, 0.0, 2.0], "GGL": [29.0, 0.0, 0.0], "AFL": [36.0, 5.0, 1.0], "DGL-2": [16.0, 0.0, 27.0]}, "ln": {"2": 2.0, "3": 2.0, "4": 2.0, "5": 3.0, "6": 2.0, "7": 2.0, "8": 2.0, "9": 3.0, "10": 3.0, "11": 3.0, "12": 3.0, "13": 2.0, "14": 2.0, "15": 3.0, "16": 3.0, "17": 2.0, "18": 3.0, "19": 2.0, "20": 2.0, "21": 3.0, "22": 8.0, "23": 3.0, "25": 1.0, "26": 6.0, "29": 67.0, "30": 1.0, "33": 1.0, "35": 1.0, "36": 1.0, "37": 1.0, "38": 1.0, "39": 1.0, "40": 1.0, "41": 1.0, "42": 1.0, "43": 1.0, "44": 1.0, "47": 1.0, "51": 1.0, "54": 2.0, "57": 16.0, "61": 1.0, "62": 1.0, "63": 1.0, "65": 1.0, "73": 4.0, "80": 3.0, "85": 1.0, "86": 2.0, "88": 1.0, "90": 1.0, "92": 1.0, "93": 1.0, "94": 2.0, "95": 1.0, "97": 1.0, "98": 1.0, "99": 3.0, "100": 1.0, "106": 1.0, "107": 1.0, "113": 2.0, "115": 2.0, "122": 1.0, "123": 1.0, "125": 1.0, "127": 1.0, "131": 1.0, "132": 1.0, "138": 1.0, "142": 1.0, "144": 1.0, "145": 1.0, "146": 1.0, "148": 1.0, "149": 3.0, "150": 2.0, "151": 2.0, "152": 2.0, "153": 3.0, "154": 2.0, "157": 8.0, "158": 1.0, "164": 3.0, "165": 4.0, "166": 2.0, "167": 3.0, "168": 4.0, "169": 3.0, "170": 3.0, "171": 2.0, "172": 2.0, "173": 3.0, "175": 2.0, "186": 7.0, "197": 7.0, "198": 1.0, "199": 1.0, "200": 1.0, "201": 1.0, "202": 1.0, "205": 1.0, "210": 2.0, "211": 6.0, "212": 2.0, "225": 2.0, "226": 1.0}, "rentAmt": 3640.0}, {"sl": "23", "type": "BLIND STITCH", "u": {"DGL-1": [8.0, 1.0, 2.0], "DRL": [0.0, 0.0, 1.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [14.0, 8.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"15": 1.0, "18": 1.0, "21": 1.0, "22": 1.0, "23": 1.0, "26": 1.0, "27": 2.0, "29": 6.0, "38": 1.0, "57": 1.0, "80": 1.0, "155": 1.0, "165": 2.0, "167": 2.0, "169": 2.0}, "rentAmt": 1800.0}, {"sl": "24", "type": "BLIND STITCH BELT LOOP MAKE", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"80": 1.0}, "rentAmt": 0.0}, {"sl": "25", "type": "ZIG ZAG", "u": {"DGL-1": [3.0, 0.0, 3.0], "DRL": [0.0, 0.0, 6.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 4.0], "AFL": [0.0, 0.0, 2.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"15": 1.0, "18": 1.0, "27": 2.0, "29": 2.0, "55": 1.0, "80": 1.0}, "rentAmt": 0.0}, {"sl": "26", "type": "MULTI NEEDLE CHAIN STITCH", "u": {"DGL-1": [86.0, 15.0, 2.0], "DRL": [24.0, 0.0, 12.0], "DFL": [12.0, 0.0, 0.0], "GGL": [29.0, 2.0, 0.0], "AFL": [26.0, 4.0, 0.0], "DGL-2": [12.0, 0.0, 0.0]}, "ln": {"2": 1.0, "3": 2.0, "4": 1.0, "5": 3.0, "6": 1.0, "7": 2.0, "8": 1.0, "9": 4.0, "10": 2.0, "11": 2.0, "13": 3.0, "16": 1.0, "17": 3.0, "18": 1.0, "19": 3.0, "20": 2.0, "21": 1.0, "23": 5.0, "25": 1.0, "26": 9.0, "29": 48.0, "31": 1.0, "32": 1.0, "34": 1.0, "35": 1.0, "36": 1.0, "37": 2.0, "39": 1.0, "40": 3.0, "41": 1.0, "42": 1.0, "43": 1.0, "44": 1.0, "45": 1.0, "46": 1.0, "47": 1.0, "48": 1.0, "49": 1.0, "51": 2.0, "54": 6.0, "55": 2.0, "57": 28.0, "62": 1.0, "63": 1.0, "64": 1.0, "65": 1.0, "73": 4.0, "80": 6.0, "85": 1.0, "86": 2.0, "88": 2.0, "90": 1.0, "91": 1.0, "93": 1.0, "94": 1.0, "95": 2.0, "97": 1.0, "98": 1.0, "99": 2.0, "100": 1.0, "101": 2.0, "104": 2.0, "113": 1.0, "115": 3.0, "121": 1.0, "122": 1.0, "123": 1.0, "124": 1.0, "125": 1.0, "126": 1.0, "127": 2.0, "129": 2.0, "131": 1.0, "132": 1.0, "138": 1.0, "140": 1.0, "141": 1.0, "142": 1.0, "144": 2.0, "147": 1.0, "148": 1.0, "149": 4.0, "150": 4.0, "151": 4.0, "152": 2.0, "153": 3.0, "154": 2.0, "164": 2.0, "165": 1.0, "166": 2.0, "167": 1.0, "168": 2.0, "169": 3.0, "170": 2.0, "171": 4.0, "172": 5.0, "198": 1.0, "199": 2.0, "200": 1.0, "201": 1.0, "202": 1.0, "203": 1.0, "204": 1.0, "205": 1.0, "211": 9.0, "212": 1.0, "213": 1.0, "225": 2.0, "226": 1.0}, "rentAmt": 5250.0}, {"sl": "27", "type": "PATTERN SAWER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [14.0, 0.0, 5.0], "DFL": [9.0, 0.0, 1.0], "GGL": [4.0, 0.0, 0.0], "AFL": [4.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 1.0]}, "ln": {"85": 1.0, "86": 1.0, "89": 1.0, "91": 1.0, "93": 1.0, "95": 1.0, "96": 1.0, "98": 2.0, "101": 1.0, "105": 1.0, "106": 1.0, "113": 2.0, "121": 1.0, "122": 1.0, "123": 1.0, "124": 1.0, "126": 2.0, "127": 1.0, "128": 1.0, "129": 1.0, "140": 1.0, "146": 1.0, "157": 2.0, "166": 1.0, "168": 1.0, "169": 1.0, "170": 1.0, "212": 1.0, "213": 1.0, "225": 2.0}, "rentAmt": 0.0}, {"sl": "28", "type": "AUTO LABLE ATTATCH", "u": {"DGL-1": [22.0, 0.0, 3.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"2": 1.0, "3": 1.0, "6": 1.0, "7": 1.0, "17": 1.0, "21": 1.0, "27": 1.0, "29": 6.0, "30": 1.0, "31": 1.0, "32": 1.0, "40": 1.0, "41": 1.0, "42": 1.0, "43": 1.0, "44": 1.0, "45": 1.0, "46": 1.0, "47": 1.0, "48": 1.0, "49": 1.0, "55": 2.0, "57": 13.0, "63": 1.0, "64": 1.0, "65": 1.0, "73": 3.0}, "rentAmt": 0.0}, {"sl": "29", "type": "FLAT LOCK", "u": {"DGL-1": [11.0, 3.0, 0.0], "DRL": [1.0, 0.0, 2.0], "DFL": [2.0, 0.0, 0.0], "GGL": [2.0, 0.0, 1.0], "AFL": [0.0, 0.0, 2.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"5": 1.0, "8": 1.0, "11": 1.0, "13": 1.0, "15": 1.0, "18": 1.0, "23": 1.0, "26": 3.0, "29": 10.0, "80": 1.0, "115": 1.0, "127": 2.0, "150": 1.0, "151": 1.0}, "rentAmt": 510.0}, {"sl": "30", "type": "BACK POCKET HEM", "u": {"DGL-1": [4.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 1.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"74": 4.0}, "rentAmt": 0.0}, {"sl": "31", "type": "SADDLE STITCH", "u": {"DGL-1": [1.0, 0.0, 2.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 4.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"27": 1.0, "55": 1.0, "80": 1.0}, "rentAmt": 0.0}, {"sl": "32", "type": "COVER STITCH", "u": {"DGL-1": [4.0, 0.0, 3.0], "DRL": [3.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [5.0, 0.0, 0.0], "AFL": [3.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"13": 1.0, "23": 1.0, "25": 1.0, "27": 3.0, "29": 3.0, "80": 1.0, "104": 3.0, "131": 1.0, "149": 2.0, "150": 1.0, "153": 2.0, "173": 3.0}, "rentAmt": 0.0}, {"sl": "33", "type": "APW", "u": {"DGL-1": [13.0, 0.0, 2.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [4.0, 0.0, 0.0], "AFL": [12.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"2": 1.0, "3": 1.0, "5": 1.0, "6": 1.0, "7": 1.0, "8": 1.0, "12": 1.0, "14": 1.0, "15": 1.0, "18": 1.0, "19": 1.0, "20": 1.0, "21": 1.0, "27": 1.0, "29": 13.0, "55": 1.0, "148": 1.0, "151": 1.0, "152": 1.0, "154": 1.0, "164": 1.0, "165": 1.0, "166": 1.0, "167": 1.0, "168": 1.0, "169": 1.0, "170": 1.0, "171": 2.0, "172": 1.0, "173": 2.0}, "rentAmt": 0.0}, {"sl": "34", "type": "LOOP ATTACH", "u": {"DGL-1": [2.0, 0.0, 3.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [6.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"5": 2.0, "27": 3.0, "29": 2.0, "149": 2.0, "150": 2.0, "151": 1.0, "153": 1.0, "166": 2.0}, "rentAmt": 0.0}, {"sl": "35", "type": "EYELET HOLE", "u": {"DGL-1": [10.0, 0.0, 3.0], "DRL": [2.0, 0.0, 0.0], "DFL": [1.0, 0.0, 1.0], "GGL": [7.0, 0.0, 1.0], "AFL": [7.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 2.0]}, "ln": {"2": 1.0, "3": 1.0, "21": 1.0, "22": 4.0, "23": 1.0, "27": 2.0, "29": 8.0, "30": 1.0, "55": 1.0, "57": 1.0, "80": 1.0, "93": 1.0, "115": 1.0, "132": 1.0, "146": 1.0, "149": 1.0, "150": 1.0, "151": 2.0, "152": 1.0, "153": 1.0, "164": 1.0, "166": 1.0, "167": 1.0, "168": 1.0, "170": 1.0, "171": 1.0, "173": 1.0, "210": 2.0, "212": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "36", "type": "TENDOL NEEDLE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 2.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "37", "type": "ZIG PATTERN", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "38", "type": "BACK POCKET SETTER", "u": {"DGL-1": [5.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"74": 5.0}, "rentAmt": 0.0}, {"sl": "39", "type": "LOOP MAKE", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [4.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 6.0]}, "ln": {"80": 1.0, "149": 1.0, "152": 1.0, "153": 1.0, "154": 1.0, "210": 6.0, "212": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "40", "type": "SMOKING MACHINE (K/S-25N)", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"80": 1.0}, "rentAmt": 0.0}, {"sl": "41", "type": "PINTAK", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"80": 1.0}, "rentAmt": 0.0}, {"sl": "42", "type": "DESTROY STITCH", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"80": 1.0}, "rentAmt": 0.0}, {"sl": "43", "type": "BUTTOM HEM", "u": {"DGL-1": [1.0, 0.0, 4.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [2.0, 0.0, 2.0], "AFL": [0.0, 0.0, 1.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"27": 3.0, "55": 1.0, "80": 1.0, "151": 2.0, "212": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "44", "type": "WAISTBAND HIDDEN STITCH MC", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "45", "type": "EMBROIDERY", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "46", "type": "AUTO POCKET CREASING WITH POCKET SETTING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "47", "type": "HIRRING & SMOCKING STITCH MACHINES", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "48", "type": "AUTO CUFF ROLLING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "49", "type": "ARM HOLE JOIN", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "50", "type": "ZIPPER ATTACH", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "51", "type": "DIRECT DRIVE AUTOMATIC ELASTIC RIBBON SPLICING MACHINE WITH AUTOMATIC THREAD TRIMMER", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"74": 1.0}, "rentAmt": 0.0}, {"sl": "52", "type": "AUTO CUFF HOLE & BUTTON  ATTAACH", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "53", "type": "AUTO BACK YOKE JOIN WITH PLEAT", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "54", "type": "AUTO LOWER PLACKET PRESS & MAKE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "55", "type": "AUTO SLEEVE PLACKET ATTACH -DOUBLE HEAD (WITHOUT LINING)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "56", "type": "AUTO POCKET SETTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "57", "type": "AUTO LOOP SETTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "58", "type": "BACK POCKET SETTER (SINGLE HEAD)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "59", "type": "AUTOMATIC WELT POCKET ATTACH (WITH SMALL ROLLER-SP-47N, WITH VACCUM DEVICE)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "60", "type": "AUTOMATIC COIN POCKET SETTER (SINGLE HEAD)", "u": {"DGL-1": [2.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"74": 2.0}, "rentAmt": 0.0}, {"sl": "61", "type": "BUTTON ATTACH WITH LOGO (6MM TO 16MM)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [6.0, 0.0, 0.0]}, "ln": {"191": 3.0, "194": 3.0, "197": 6.0}, "rentAmt": 0.0}, {"sl": "62", "type": "AUTO CUFF FORMING & TOP STITCH", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 0.0]}, "ln": {"191": 1.0, "194": 1.0, "197": 2.0}, "rentAmt": 0.0}, {"sl": "63", "type": "ZIPPER PRE-EXPANSION MC", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "64", "type": "TEMPLEAT MC ( 360 DEGREE )", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [6.0, 0.0, 0.0]}, "ln": {"222": 6.0, "225": 6.0}, "rentAmt": 0.0}, {"sl": "65", "type": "LACE CUTTER (M)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "66", "type": "PICOTING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "67", "type": "FUSING MACHINE (BIG)", "u": {"DGL-1": [2.0, 0.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [3.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"24": 2.0, "29": 2.0, "109": 1.0, "110": 1.0, "111": 1.0, "158": 3.0, "175": 1.0, "192": 1.0, "197": 1.0, "206": 1.0, "211": 1.0, "220": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "68", "type": "FUSING MACHINE (SMALL)", "u": {"DGL-1": [2.0, 0.0, 1.0], "DRL": [2.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 1.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 0.0]}, "ln": {"24": 2.0, "27": 1.0, "29": 2.0, "109": 1.0, "111": 1.0, "149": 1.0, "175": 1.0, "192": 1.0, "197": 1.0, "220": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "69", "type": "NEEDLE DETECTOR", "u": {"DGL-1": [3.0, 0.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [2.0, 0.0, 0.0], "GGL": [2.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"24": 3.0, "29": 3.0, "112": 3.0, "130": 2.0, "157": 2.0, "175": 1.0, "194": 1.0, "197": 1.0, "208": 1.0, "211": 1.0, "222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "70", "type": "AUTO SPREADER", "u": {"DGL-1": [3.0, 0.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [3.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"24": 3.0, "29": 3.0, "114": 3.0, "158": 3.0, "175": 2.0, "192": 1.0, "197": 1.0, "206": 2.0, "211": 2.0, "220": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "71", "type": "AUTO SPREADER TABLE", "u": {"DGL-1": [7.0, 0.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [3.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"24": 7.0, "29": 7.0, "114": 3.0, "158": 3.0, "175": 2.0, "192": 1.0, "197": 1.0, "206": 2.0, "211": 2.0, "220": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "72", "type": "BAND KNIFE", "u": {"DGL-1": [0.0, 0.0, 1.0], "DRL": [2.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [2.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"27": 1.0, "114": 2.0, "158": 2.0, "175": 1.0, "206": 1.0, "211": 1.0}, "rentAmt": 0.0}, {"sl": "73", "type": "FABRIC INSPECTION", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [5.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [2.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"114": 5.0, "158": 2.0, "175": 1.0}, "rentAmt": 0.0}, {"sl": "74", "type": "FABRIC LOSENING/RELAXING", "u": {"DGL-1": [4.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [2.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"24": 4.0, "29": 4.0, "158": 2.0, "175": 2.0, "192": 1.0, "197": 1.0, "206": 2.0, "211": 2.0, "220": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "75", "type": "PLOTTER", "u": {"DGL-1": [3.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"24": 1.0, "29": 1.0, "80": 2.0, "175": 2.0, "206": 1.0, "211": 1.0}, "rentAmt": 0.0}, {"sl": "76", "type": "PATTERN CUTTER", "u": {"DGL-1": [3.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"24": 2.0, "29": 2.0, "80": 1.0, "158": 1.0, "175": 1.0, "206": 1.0, "211": 1.0}, "rentAmt": 0.0}, {"sl": "77", "type": "SLEEVE PLACKET FOLDING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [12.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [6.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [6.0, 0.0, 0.0]}, "ln": {"109": 4.0, "110": 4.0, "111": 4.0, "137": 1.0, "139": 1.0, "140": 1.0, "144": 1.0, "146": 1.0, "147": 1.0, "184": 1.0, "185": 1.0, "197": 2.0, "204": 4.0, "211": 4.0}, "rentAmt": 0.0}, {"sl": "78", "type": "PLASTIC STAPLE MACHINE", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [4.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"80": 1.0, "112": 1.0, "157": 1.0, "175": 4.0}, "rentAmt": 0.0}, {"sl": "79", "type": "CLOTH DRIL", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 1.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"24": 1.0, "29": 1.0, "114": 1.0, "158": 1.0}, "rentAmt": 0.0}, {"sl": "80", "type": "STRAIGHT  KNIFE (HAND CUTTING MC)", "u": {"DGL-1": [12.0, 0.0, 1.0], "DRL": [21.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [16.0, 0.0, 0.0], "AFL": [12.0, 0.0, 0.0], "DGL-2": [17.0, 0.0, 0.0]}, "ln": {"24": 7.0, "27": 1.0, "29": 7.0, "69": 4.0, "73": 4.0, "80": 1.0, "114": 21.0, "158": 16.0, "175": 12.0, "192": 4.0, "197": 4.0, "206": 9.0, "211": 9.0, "220": 4.0, "225": 4.0}, "rentAmt": 0.0}, {"sl": "81", "type": "VACUUM IRON TABLE-SEWING", "u": {"DGL-1": [20.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [4.0, 0.0, 0.0], "AFL": [16.0, 0.0, 3.0], "DGL-2": [25.0, 0.0, 0.0]}, "ln": {"80": 20.0, "137": 1.0, "147": 1.0, "152": 1.0, "154": 1.0, "165": 2.0, "166": 1.0, "167": 3.0, "168": 2.0, "169": 1.0, "172": 2.0, "173": 5.0, "184": 2.0, "197": 2.0, "207": 21.0, "211": 21.0, "212": 1.0, "213": 1.0, "225": 2.0}, "rentAmt": 0.0}, {"sl": "82", "type": "VACUUM IRON TABLE-FINISHING", "u": {"DGL-1": [20.0, 20.0, 0.0], "DRL": [86.0, 0.0, 0.0], "DFL": [37.0, 0.0, 0.0], "GGL": [75.0, 0.0, 0.0], "AFL": [38.0, 0.0, 0.0], "DGL-2": [42.0, 0.0, 0.0]}, "ln": {"54": 20.0, "57": 20.0, "112": 86.0, "130": 37.0, "157": 75.0, "175": 38.0, "193": 3.0, "197": 3.0, "207": 35.0, "211": 35.0, "221": 4.0, "225": 4.0}, "rentAmt": 4000.0}, {"sl": "83", "type": "VACUUM IRON", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [37.0, 0.0, 0.0], "GGL": [73.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"130": 37.0, "137": 1.0, "147": 1.0, "152": 1.0, "154": 1.0, "157": 69.0}, "rentAmt": 0.0}, {"sl": "84", "type": "SNAP BUTTON", "u": {"DGL-1": [50.0, 2.0, 4.0], "DRL": [9.0, 0.0, 9.0], "DFL": [14.0, 0.0, 0.0], "GGL": [8.0, 5.0, 0.0], "AFL": [6.0, 0.0, 3.0], "DGL-2": [12.0, 0.0, 0.0]}, "ln": {"8": 3.0, "15": 2.0, "16": 2.0, "18": 2.0, "21": 1.0, "22": 15.0, "23": 4.0, "26": 2.0, "27": 4.0, "29": 31.0, "50": 15.0, "57": 15.0, "61": 2.0, "73": 2.0, "80": 2.0, "93": 1.0, "95": 1.0, "112": 4.0, "113": 1.0, "115": 2.0, "130": 14.0, "157": 3.0, "165": 2.0, "167": 2.0, "173": 2.0, "186": 6.0, "197": 6.0, "207": 6.0, "211": 6.0}, "rentAmt": 0.0}, {"sl": "85", "type": "THREAD SUCKING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [4.0, 0.0, 0.0], "DFL": [3.0, 0.0, 0.0], "GGL": [4.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [6.0, 0.0, 0.0]}, "ln": {"112": 4.0, "130": 3.0, "157": 4.0, "194": 2.0, "197": 2.0, "208": 2.0, "211": 2.0, "222": 2.0, "225": 2.0}, "rentAmt": 0.0}, {"sl": "86", "type": "FORMAL PANT PRESSING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "87", "type": "AUTO CUFF FORMING", "u": {"DGL-1": [9.5, 0.0, 0.0], "DRL": [14.0, 0.0, 0.0], "DFL": [5.0, 0.0, 0.0], "GGL": [8.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 0.0]}, "ln": {"30": 0.5, "32": 0.5, "34": 1.0, "36": 1.0, "37": 1.0, "38": 1.0, "40": 1.0, "41": 1.0, "43": 1.0, "47": 1.0, "49": 0.5, "57": 9.5, "109": 5.0, "110": 4.0, "111": 5.0, "124": 2.0, "125": 1.0, "129": 2.0, "137": 1.0, "138": 1.0, "140": 1.0, "141": 1.0, "142": 1.0, "144": 1.0, "146": 1.0, "148": 1.0, "200": 1.0, "205": 1.0, "211": 2.0}, "rentAmt": 0.0}, {"sl": "88", "type": "AUTO COLLAR FORMING", "u": {"DGL-1": [7.5, 0.0, 0.0], "DRL": [12.0, 0.0, 0.0], "DFL": [7.0, 0.0, 0.0], "GGL": [7.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [5.0, 0.0, 0.0]}, "ln": {"30": 0.5, "32": 0.5, "36": 1.0, "37": 1.0, "41": 1.0, "43": 1.0, "46": 1.0, "47": 1.0, "48": 0.5, "57": 7.5, "109": 4.0, "110": 4.0, "111": 4.0, "122": 2.0, "123": 1.0, "124": 1.0, "126": 1.0, "127": 1.0, "129": 1.0, "138": 1.0, "139": 1.0, "140": 1.0, "142": 1.0, "144": 1.0, "146": 1.0, "148": 1.0, "198": 1.0, "199": 1.0, "200": 2.0, "201": 1.0, "211": 5.0}, "rentAmt": 0.0}, {"sl": "89", "type": "COLLAR TRIMMING & TURNING", "u": {"DGL-1": [11.0, 0.0, 0.0], "DRL": [16.0, 0.0, 0.0], "DFL": [10.0, 0.0, 0.0], "GGL": [7.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [6.0, 0.0, 0.0]}, "ln": {"30": 0.5, "31": 0.5, "32": 1.0, "34": 1.0, "36": 1.0, "37": 1.0, "38": 1.0, "40": 1.0, "41": 1.0, "42": 1.0, "43": 1.0, "45": 1.0, "57": 11.0, "109": 5.0, "110": 4.0, "111": 7.0, "121": 2.0, "122": 1.0, "123": 2.0, "126": 1.0, "127": 1.0, "128": 1.0, "129": 1.0, "132": 1.0, "137": 1.0, "138": 1.0, "140": 1.0, "144": 1.0, "145": 1.0, "147": 1.0, "156": 1.0, "185": 2.0, "197": 2.0, "199": 1.0, "200": 1.0, "201": 2.0, "211": 4.0}, "rentAmt": 0.0}, {"sl": "90", "type": "THREAD WINDER", "u": {"DGL-1": [2.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"80": 2.0}, "rentAmt": 0.0}, {"sl": "91", "type": "HEAT SEAL", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [3.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"112": 1.0, "157": 3.0, "198": 1.0, "199": 1.0, "201": 1.0, "204": 1.0, "211": 4.0}, "rentAmt": 0.0}, {"sl": "92", "type": "DAI CUTTER", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"24": 1.0, "29": 1.0, "130": 1.0}, "rentAmt": 0.0}, {"sl": "93", "type": "NECK PRESS MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [2.0, 0.0, 0.0], "GGL": [2.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"112": 3.0, "130": 2.0, "157": 2.0, "194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "94", "type": "BUTTON WRAPPING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [5.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [5.0, 0.0, 0.0]}, "ln": {"112": 1.0, "130": 5.0, "158": 1.0, "207": 5.0, "211": 5.0}, "rentAmt": 0.0}, {"sl": "95", "type": "BUTTON PULL TEST MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"130": 1.0, "157": 1.0, "175": 2.0}, "rentAmt": 0.0}, {"sl": "96", "type": "RECON MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [5.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [4.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"109": 1.0, "110": 1.0, "111": 1.0, "113": 1.0, "115": 1.0, "131": 1.0, "138": 1.0, "145": 1.0, "152": 1.0, "158": 1.0, "175": 1.0, "205": 1.0, "211": 1.0}, "rentAmt": 0.0}, {"sl": "97", "type": "BOX PLACKET FUSING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [9.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [4.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 0.0]}, "ln": {"109": 3.0, "110": 3.0, "111": 3.0, "137": 1.0, "143": 1.0, "144": 1.0, "149": 1.0, "200": 1.0, "203": 1.0, "211": 2.0}, "rentAmt": 0.0}, {"sl": "98", "type": "SIDE SEAM PRESS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [2.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"109": 1.0, "110": 1.0, "140": 1.0, "194": 3.0, "197": 3.0}, "rentAmt": 0.0}, {"sl": "99", "type": "ARM HOLE PRESS MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [5.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [2.0, 0.0, 3.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"109": 3.0, "110": 1.0, "111": 1.0, "140": 2.0, "194": 3.0, "197": 3.0}, "rentAmt": 0.0}, {"sl": "100", "type": "CUTTING TABLE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [5.0, 0.0, 0.0], "AFL": [3.0, 0.0, 0.0], "DGL-2": [5.0, 0.0, 0.0]}, "ln": {"158": 5.0, "175": 3.0, "192": 1.0, "197": 1.0, "206": 2.0, "211": 2.0, "220": 2.0, "225": 2.0}, "rentAmt": 0.0}, {"sl": "101", "type": "SHIRT FINISHER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "102", "type": "PANT FINISHER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "103", "type": "FRONT PLACKET FOLDING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "104", "type": "POCKET CRISSING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "105", "type": "AUTO CUTTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"192": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "106", "type": "RIBBON CUTTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 1.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"114": 1.0}, "rentAmt": 200.0}, {"sl": "107", "type": "END CUTTER", "u": {"DGL-1": [7.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [2.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 0.0]}, "ln": {"24": 7.0, "29": 7.0, "114": 1.0, "175": 2.0, "206": 2.0, "211": 2.0}, "rentAmt": 0.0}, {"sl": "108", "type": "COLLAR NOTCHER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 2.0], "GGL": [4.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"138": 1.0, "140": 1.0, "144": 1.0, "147": 1.0}, "rentAmt": 0.0}, {"sl": "109", "type": "CARTON STRAPING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"208": 1.0, "211": 1.0}, "rentAmt": 0.0}, {"sl": "110", "type": "THREAD TRIMMER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"175": 1.0}, "rentAmt": 0.0}, {"sl": "111", "type": "COLLAR AND CUFF PRESS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "112", "type": "COLLAR DOWN", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "113", "type": "GERBER DIZIT TIZE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"158": 1.0}, "rentAmt": 0.0}, {"sl": "114", "type": "GERBER PLOTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"158": 1.0}, "rentAmt": 0.0}, {"sl": "115", "type": "WINDA TEMPLATE CUTTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"158": 1.0}, "rentAmt": 0.0}, {"sl": "116", "type": "HANGER SYSTEM", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "117", "type": "FRONT PLACKET PRESS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "118", "type": "AUTOMATIC CORNER CUTTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "119", "type": "AUTOMATIC DOUBLE BUCK FUSING PRESS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "120", "type": "PLACKET CUTTING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "121", "type": "DEHUMIDIFIER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [5.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"175": 5.0, "194": 2.0, "197": 2.0, "208": 2.0, "211": 2.0}, "rentAmt": 0.0}, {"sl": "122", "type": "BUTTON FEEDER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [5.0, 0.0, 1.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [8.0, 0.0, 0.0]}, "ln": {"112": 1.0, "157": 5.0, "184": 1.0, "185": 1.0, "197": 2.0, "207": 6.0, "211": 6.0}, "rentAmt": 0.0}, {"sl": "123", "type": "CHAIN STITCH PULLER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "124", "type": "OVER LOCK PULLER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "125", "type": "RACING PULLER(FOR LOOP MAKE)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "126", "type": "RACING PULLER(FOR DNLS)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [3.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"145": 1.0, "147": 2.0}, "rentAmt": 0.0}, {"sl": "127", "type": "MPM MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "128", "type": "TEMPLATE CUTTING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"109": 1.0, "222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "129", "type": "WASHING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "130", "type": "DAYER MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "131", "type": "SPORT REMOVER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [3.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [1.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"112": 3.0, "157": 1.0, "175": 1.0, "208": 4.0, "211": 4.0}, "rentAmt": 0.0}, {"sl": "132", "type": "COLLAR MARK", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "133", "type": "BAYES CUTTING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [2.0, 0.0, 0.0]}, "ln": {"192": 1.0, "197": 1.0, "222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "134", "type": "LAILING CUTTING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"158": 1.0}, "rentAmt": 0.0}, {"sl": "135", "type": "AUTO FOLDING TABLE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "136", "type": "SOLDER FUSING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "137", "type": "COLLER BOTTOM CUTTING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"130": 1.0}, "rentAmt": 0.0}, {"sl": "138", "type": "POCKET PRESS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [1.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"109": 1.0, "130": 1.0}, "rentAmt": 0.0}, {"sl": "139", "type": "COLLER BTTOM CUTTING DICS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "140", "type": "SLEEVE PLACKET & GAMBLE PRESS", "u": {"DGL-1": [8.5, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"30": 0.5, "31": 0.5, "34": 1.0, "36": 1.0, "38": 1.0, "41": 1.0, "43": 1.0, "45": 1.0, "47": 1.0, "49": 0.5, "57": 8.5, "194": 3.0, "197": 3.0}, "rentAmt": 0.0}, {"sl": "141", "type": "SHOULDER AND BACK YOKE PRESS", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [3.0, 0.0, 0.0]}, "ln": {"109": 1.0, "194": 3.0, "197": 3.0}, "rentAmt": 0.0}, {"sl": "142", "type": "COLLAR MARK & MATCH", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [1.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"114": 1.0}, "rentAmt": 0.0}, {"sl": "143", "type": "BIAS ROLL MAKING MACHINE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "144", "type": "ROLL CUTTING MACHINE STRAIGHT", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [21.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {"114": 21.0}, "rentAmt": 0.0}, {"sl": "145", "type": "FRONT PLACKET CUTTER", "u": {"DGL-1": [1.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"62": 1.0, "73": 1.0, "186": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "146", "type": "AUTO COLLAR MAKE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "147", "type": "AUTO CUFF MAKE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "148", "type": "DYE CUTTING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0]}, "ln": {}, "rentAmt": 0.0}, {"sl": "149", "type": "NECK PRESS  (THREE HEAD)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"194": 1.0, "197": 1.0}, "rentAmt": 0.0}, {"sl": "150", "type": "DOWN FILLING (AUTO) 4 NOSLE", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "151", "type": "CRASING MC ( FIX )", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "152", "type": "ROLL CUTTING MACHINE STRAIGHT (RIB CUTTER)", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [1.0, 1.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"206": 1.0, "211": 1.0}, "rentAmt": 0.0}, {"sl": "153", "type": "VELCRO CUTTER MACHINE WITH CONER CUT", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"222": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "154", "type": "HEAT CUTTER / AUTO ARM CUTTER", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"220": 1.0, "225": 1.0}, "rentAmt": 0.0}, {"sl": "155", "type": "FOLDING TABLE - AUTOMATIC", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [4.0, 0.0, 0.0]}, "ln": {"192": 4.0, "197": 4.0}, "rentAmt": 0.0}, {"sl": "156", "type": "FOLDING TABLE -SEMI AUTO", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [0.0, 0.0, 0.0], "DFL": [3.0, 0.0, 0.0], "GGL": [0.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [8.0, 0.0, 0.0]}, "ln": {"130": 3.0, "192": 8.0, "197": 8.0}, "rentAmt": 0.0}, {"sl": "157", "type": "POLY SEALING", "u": {"DGL-1": [0.0, 0.0, 0.0], "DRL": [2.0, 0.0, 0.0], "DFL": [0.0, 0.0, 0.0], "GGL": [3.0, 0.0, 0.0], "AFL": [0.0, 0.0, 0.0], "DGL-2": [1.0, 0.0, 0.0]}, "ln": {"112": 2.0, "157": 3.0, "208": 1.0, "211": 1.0}, "rentAmt": 0.0}], "units": ["DGL-1", "DRL", "DFL", "GGL", "AFL", "DGL-2"], "lineCols": [[2, "DGL-1", "BTM-L-1"], [3, "DGL-1", "BTM-L-2"], [4, "DGL-1", "BTM-L-3"], [5, "DGL-1", "BTM-L-4"], [6, "DGL-1", "BTM-L-5"], [7, "DGL-1", "BTM-L-6"], [8, "DGL-1", "BTM-L-7"], [9, "DGL-1", "BTM-L-8"], [10, "DGL-1", "BTM-L-9"], [11, "DGL-1", "BTM-L-10"], [12, "DGL-1", "BTM-L-11"], [13, "DGL-1", "BTM-L-12"], [14, "DGL-1", "BTM-L-13"], [15, "DGL-1", "BTM-L-14"], [16, "DGL-1", "BTM-L-15"], [17, "DGL-1", "BTM-L-16"], [18, "DGL-1", "BTM-L-17"], [19, "DGL-1", "BTM-L-18"], [20, "DGL-1", "BTM-L-19"], [21, "DGL-1", "BTM-L-20"], [22, "DGL-1", "BTM-FINISHING"], [23, "DGL-1", "BTM-PILOT"], [24, "DGL-1", "BTM-CUTTING"], [25, "DGL-1", "BTM-ALTER"], [26, "DGL-1", "BTM-RENT"], [27, "DGL-1", "BTM-IDLE"], [29, "DGL-1", "BTM-T.RUNING"], [30, "DGL-1", "TOP-L-1"], [31, "DGL-1", "TOP-L-2"], [32, "DGL-1", "TOP-L-3"], [33, "DGL-1", "TOP-L-4"], [34, "DGL-1", "TOP-L-5"], [35, "DGL-1", "TOP-L-6"], [36, "DGL-1", "TOP-L-7"], [37, "DGL-1", "TOP-L-8"], [38, "DGL-1", "TOP-L-9"], [39, "DGL-1", "TOP-L-10"], [40, "DGL-1", "TOP-L-11"], [41, "DGL-1", "TOP-L-12"], [42, "DGL-1", "TOP-L-13"], [43, "DGL-1", "TOP-L-14"], [44, "DGL-1", "TOP-L-15"], [45, "DGL-1", "TOP-L-16"], [46, "DGL-1", "TOP-L-17"], [47, "DGL-1", "TOP-L-18"], [48, "DGL-1", "TOP-L-19"], [49, "DGL-1", "TOP-L-20"], [50, "DGL-1", "TOP-FINISHING"], [51, "DGL-1", "TOP-PILOT & SMS"], [52, "DGL-1", "TOP-CUTTING"], [53, "DGL-1", "TOP-ALTER"], [54, "DGL-1", "TOP-RENT"], [55, "DGL-1", "TOP-2A-IDLE"], [57, "DGL-1", "TOP- TO-RUNING"], [58, "DGL-1", "TOP-2B-L-1"], [59, "DGL-1", "TOP-2B-L-2"], [60, "DGL-1", "TOP-2B-L-3"], [61, "DGL-1", "TOP-2B-L-4"], [62, "DGL-1", "TOP-2B-L-5"], [63, "DGL-1", "TOP-2B-L-6"], [64, "DGL-1", "TOP-2B-L-7"], [65, "DGL-1", "TOP-2B-L-8"], [66, "DGL-1", "TOP-2B-FINISHING"], [67, "DGL-1", "TOP-2B-PILOT"], [68, "DGL-1", "TOP-2B-CUTTING"], [69, "DGL-1", "TOP-2B-ALTER"], [70, "DGL-1", "TOP-2B-RENT"], [71, "DGL-1", "TOP-2B-IDLE"], [73, "DGL-1", "TOP-2B T.RUNING"], [74, "DGL-1", "BTM-SPESIAL-01"], [75, "DGL-1", "BTM-SPESIAL-02"], [76, "DGL-1", "TOP-SPESIAL-03"], [77, "DGL-1", "TOP-SPESIAL-04"], [78, "DGL-1", "TRAINING C."], [79, "DGL-1", "CAP SECTION."], [80, "DGL-1", "SAMPLE & DEV"], [85, "DRL", "L-1"], [86, "DRL", "L-2"], [87, "DRL", "L-3"], [88, "DRL", "L-4"], [89, "DRL", "L-5"], [90, "DRL", "L-6"], [91, "DRL", "L-7"], [92, "DRL", "L-8"], [93, "DRL", "L-9"], [94, "DRL", "L-10"], [95, "DRL", "L-11"], [96, "DRL", "L-12"], [97, "DRL", "L-13"], [98, "DRL", "L-14"], [99, "DRL", "L-15"], [100, "DRL", "L-16"], [101, "DRL", "L-17"], [102, "DRL", "L-18"], [103, "DRL", "L-19"], [104, "DRL", "L-20"], [105, "DRL", "L-21"], [106, "DRL", "L-22"], [107, "DRL", "L-23"], [108, "DRL", "L-24"], [109, "DRL", "Swing Unit-1 (FUSING SEC)"], [110, "DRL", "Swing Unit-2 (FUSING SEC)"], [111, "DRL", "Swing Unit-3 (FUSING SEC)"], [112, "DRL", "FINISHING"], [113, "DRL", "PILOT-SMS & TRAINING C."], [114, "DRL", "CUTTING/ FABRIC INSPECTION"], [115, "DRL", "SAMPLE & DEV"], [120, "DFL", "L-1"], [121, "DFL", "L-2"], [122, "DFL", "L-3"], [123, "DFL", "L-4"], [124, "DFL", "L-5"], [125, "DFL", "L-6"], [126, "DFL", "L-7"], [127, "DFL", "L-8"], [128, "DFL", "L-9"], [129, "DFL", "L-10"], [130, "DFL", "FINISHING"], [131, "DFL", "PILOT- SMS & TRAINING C."], [132, "DFL", "SAMPLE & DEV"], [137, "GGL", "L-1"], [138, "GGL", "L-2"], [139, "GGL", "L-3"], [140, "GGL", "L-4"], [141, "GGL", "L-5"], [142, "GGL", "L-6"], [143, "GGL", "L-7"], [144, "GGL", "L-8"], [145, "GGL", "L-9"], [146, "GGL", "L-10"], [147, "GGL", "L-11"], [148, "GGL", "L-12"], [149, "GGL", "L-13"], [150, "GGL", "L-14"], [151, "GGL", "L-15"], [152, "GGL", "L-16"], [153, "GGL", "L-17"], [154, "GGL", "L-18"], [155, "GGL", "L-19"], [156, "GGL", "L-20"], [157, "GGL", "FINISHING"], [158, "GGL", "PILOT- SMS & TRAINING C."], [159, "GGL", "SAMPLE & DEV"], [164, "AFL", "L-1"], [165, "AFL", "L-2"], [166, "AFL", "L-3"], [167, "AFL", "L-4"], [168, "AFL", "L-5"], [169, "AFL", "L-6"], [170, "AFL", "L-7"], [171, "AFL", "L-8"], [172, "AFL", "L-9"], [173, "AFL", "L-10"], [174, "AFL", "L-11"], [175, "AFL", "FINISHING"], [176, "AFL", "PILOT-SMS & TRAINING C."], [177, "AFL", "SAMPLE"], [178, "AFL", "STORE"], [179, "AFL", "AWL LAB"], [184, "DGL-2", "GROUND-FLOOR-L-1"], [185, "DGL-2", "GROUND-FLOOR-L-2"], [186, "DGL-2", "GROUND-FLOOR-L-3"], [187, "DGL-2", "GROUND-FLOOR-L-4"], [188, "DGL-2", "GROUND-FLOOR-L-5"], [189, "DGL-2", "GROUND-FLOOR-L-6"], [190, "DGL-2", "GROUND-FLOOR-L-7"], [191, "DGL-2", "GROUND-FLOOR-L-8"], [192, "DGL-2", "GROUND- FLOOR- CUTTING"], [193, "DGL-2", "GROUND- FLOOR- FINISHING"], [194, "DGL-2", "GROUND- FLOOR- OTHERS"], [195, "DGL-2", "RENT"], [196, "DGL-2", "GR-IDLE"], [197, "DGL-2", "GROUND- FLOOR  T. RUNNING"], [198, "DGL-2", "1ST-FLOOR-L-1"], [199, "DGL-2", "1ST-FLOOR-L-2"], [200, "DGL-2", "1ST-FLOOR-L-3"], [201, "DGL-2", "1ST-FLOOR-L-4"], [202, "DGL-2", "1ST-FLOOR-L-5"], [203, "DGL-2", "1ST-FLOOR-L-6"], [204, "DGL-2", "1ST-FLOOR-L-7"], [205, "DGL-2", "1ST-FLOOR-L-8"], [206, "DGL-2", "1ST-FLOOR-CUTTING"], [207, "DGL-2", "1ST-FLOOR-FINISHING"], [208, "DGL-2", "1ST-FLOOR-OTHERS"], [209, "DGL-2", "RENT"], [210, "DGL-2", "1ST-IDLE"], [211, "DGL-2", "1ST-FLOOR T. RUNNING"], [212, "DGL-2", "2ND-FLOOR-L-1"], [213, "DGL-2", "2ND-FLOOR-L-2"], [214, "DGL-2", "2ND-FLOOR-L-3"], [215, "DGL-2", "2ND-FLOOR-L-4"], [216, "DGL-2", "2ND-FLOOR-L-5"], [217, "DGL-2", "2ND-FLOOR-L-6"], [218, "DGL-2", "2ND-FLOOR-L-7"], [219, "DGL-2", "2ND-FLOOR-L-8"], [220, "DGL-2", "2ND-FLOOR-CUTTING"], [221, "DGL-2", "2ND-FLOOR-FINISHING"], [222, "DGL-2", "2ND-FLOOR-OTHERS"], [223, "DGL-2", "RENT"], [224, "DGL-2", "2ND-IDLE"], [225, "DGL-2", "2ND-FLOOR T. RUNNING"], [226, "DGL-2", "SAMPLE & DEVOLOPMENT"], [227, "DGL-2", "SMS & PILOT"], [228, "DGL-2", "TRAINING"]], "monthly": {"months": ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"], "units": ["DGL-1", "DGL-2", "DRL", "DFL", "AFL", "GGL"], "data": {"DGL-1": [2280500.0, 1485870.0, 1167550.0, 1864320.0, 1844040.0, 1199440.0, 888160.0, 578869.0, 556710.0, 0.0, 0.0, 0.0], "DGL-2": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "DRL": [133690.0, 83760.0, 21500.0, 43400.0, 113750.0, 166560.0, 94360.0, 0.0, 83100.0, 0.0, 0.0, 0.0], "DFL": [68500.0, 28400.0, 22220.0, 25500.0, 48100.0, 39600.0, 69990.0, 36000.0, 33000.0, 0.0, 0.0, 0.0], "AFL": [264790.0, 136340.0, 155440.0, 211050.0, 236130.0, 293620.0, 262150.0, 190200.0, 194220.0, 0.0, 0.0, 0.0], "GGL": [292150.0, 95730.0, 256670.0, 179170.0, 154500.0, 143760.0, 166120.0, 92970.0, 99770.0, 0.0, 0.0, 0.0]}}};
+const PAL = ['#0E8A8A','#EC268F','#118DFF','#F59E0B','#8B5CF6','#00B7C3','#F97316','#64748B','#84CC16','#06B6D4'];
+const STR = {en:{
+brandTitle:'MACHINE <span>INVENTORY</span>',brandSub:'Dekkoisho Group · Running · Rented · Idle — DGL-1 · DRL · DFL · GGL · AFL · DGL-2',
+refreshBtn:'⟳ Refresh Data',filters:'⚙ Filters',unitH:'Unit',lineH:'Line / Section',
+lineHint:'Pick a line to see only that line\'s machines. Picking a line selects its unit only.',
+typeH:'Machine Type',typeSearchPh:'Filter types…',searchH:'Search Machine',searchPh:'Type machine name…',
+resetAll:'Reset all filters',tools:'Tools',dark:'🌙 Dark',light:'☀️ Light',langBtn:'🌐 বাংলা',
+selectAll:'Select all',clear:'Clear',allUnits:'All units ▾',noUnits:'No units selected ▾',nUnits:'{n} units selected ▾',
+allTypes:'All machine types ▾',noTypes:'No machine types selected ▾',nTypes:'{n} machine types selected ▾',allLines:'All lines',
+kpiTotal:'Total Machines',kpiRun:'Running',kpiRent:'Rented',kpiIdle:'Idle',kpiTypes:'Machine Types',kpiUnits:'Units Selected',
+chipAllTypes:'all types',chipUnits:'units',chipInSheet:'in sheet',chipAll:'All',
+ovDonutT:'Running / Rented / Idle',ovDonutS:'Share of total machines',
+ovUnitT:'Machines by Unit',ovUnitS:'Total machines per unit in the selected filters',
+ovIdleT:'Idle Machines by Unit',ovIdleS:'Where idle stock sits — worth a look',
+ovInsT:'Attention Points',ovInsS:'Auto-detected from the selected data',
+ovTopT:'Top 10 Machine Types',ovTopS:'Largest totals in the selected filters',
+ovDualT:'Machines Both Idle & Rented',ovDualS:'Same machine type with rented AND idle machines — why sit idle while others are rented',
+detT:'Machine Details',detS:'{n} machine type(s) in the selected filters — sorted by total, scroll inside the table',
+unitT:'Unit Summary',unitS:'Per-unit running / rented / idle inside the selected filters',
+unitRentT:'Rented Machines by Unit',unitRentS:'Rented stock per unit',
+unitShareT:'Machine Share by Unit',unitShareS:'Share of total machines',
+navOv:'OVERVIEW',navList:'MACHINE DETAILS',navUnit:'UNIT SUMMARY',navRent:'RENTAL ANALYSIS',
+foot:'Design: same family as the Utility & Development dashboards (light theme) · Data: Google Sheet DATA tab, snapshot at build time · Live refresh fetches the Sheet',
+thSL:'SL',thType:'Machine Type',thRun:'Running',thRent:'Rented',thIdle:'Idle',thTot:'Total',thRentAmt:'Rent Amount',
+thShare:'Share',thIdlePct:'Idle %',thEdit:'Edit',thUnit:'Unit',
+nodata:'No data in the selected filters',
+lineNote:'Line view: {u} · {l} — counts are machines placed in this line. Rented / Idle are tracked per section, not per line, so they show 0 here.',
+insZeroT:'{n} machine type(s) currently at zero',insZeroB:'No running, rented or idle machines in the selected filters for these types — e.g. {list}.',
+insIdleT:'Most idle: {type} — {n} idle',insIdleB:'Running <b>{r}</b> · rented <b>{e}</b> · total <b>{t}</b>. Worth checking why so many sit idle.',
+insUnitIdleT:'{u} holds the most idle machines ({n})',insUnitIdleB:'Unit total <b>{t}</b> · running <b>{r}</b> · rented <b>{e}</b>.',
+insRentT:'Most rented: {type} — {n} rented',insRentB:'Running <b>{r}</b> · idle <b>{i}</b> · total <b>{t}</b>.',
+insMore:' and {n} more',insNothing:'Nothing to flag in the selected data.',
+dualNone:'No machine is both rented and idle in the selected filters',dualRent:'Rented',dualIdle:'Idle',
+cpList:'📋 List',cpEdit:'✏️ Edit Counts',cpSetup:'⚙️ Setup',cpClose:'✖ Close',
+cpTitleRun:'▶ Running Machines',cpTitleRent:'↔ Rented Machines',cpTitleIdle:'⏸️ Idle Machines',cpTitleTot:'⬢ Total Machines',
+cpTitleTypes:'⚙ Machine Types',cpTitleUnits:'🏭 Unit Summary',cpTypes:'type(s)',cpAllUnits:'All units',
+cpEditH:'Edit a count in the Sheet — it writes to the exact cell (unit total or line cell). The dashboard refreshes after saving.',
+cpTypeL:'Machine Type',cpUnitL:'Unit',cpTargetL:'What to edit',cpTargetUnit:'Unit total (Running / Rented / Idle)',cpTargetLine:'Line / section count',
+cpFieldL:'Field',cpLineL:'Line / Section',cpValL:'New Count',cpSaveBtn:'💾 Save Count',
+cpSetupH:'Apps Script Web app URL — for THIS sheet only (deploy the Machine_Dashboard_Entry_Code.gs file, then paste the URL here once). Saved on this device only.',
+cpUrlL:'Web app URL (ends with /exec)',cpPassL:'Password',cpRemember:'Remember on this device',cpSaveSetup:'💾 Save Setup',
+msgType:'❌ Pick a Machine Type.',msgCount:'❌ Enter the New Count.',msgSetupUrl:'❌ First open ⚙️ Setup and save the Apps Script URL.',
+msgToken:'❌ Enter the password in ⚙️ Setup first.',msgSaving:'⏳ Saving...',msgSaved:'✅ Saved! Refreshing...',
+msgSaveFail:'❌ Save failed: {e}',msgSetupSaved:'✅ Setup saved.',msgNeedUrl:'❌ Enter the Web app URL.',
+liveFetching:'⏳ Fetching data from the Sheet...',liveFail:'⚪ Snapshot data (could not fetch from Sheet)',
+liveAlert:'Could not fetch live data from the Sheet — showing the previous data. Check your internet connection.',
+cpFoot:'Source: Machine Inventory Dashboard · Google Sheet DATA tab · Printed on {d}',
+rentKpiTot:'Total Rented',rentKpiTypes:'Rented Types',rentKpiAmt:'Rent Amount',rentKpiUnits:'Units with Rented',
+rentByUnitT:'Rented by Unit',rentByUnitS:'Rented machines per unit',
+rentTopT:'Top 10 Rented Types',rentTopS:'Largest rented counts in the selected filters',
+rentListT:'Rented Types',rentListS:'All types with rented machines in the selected filters',
+rentUnitT:'Rented by Unit',rentUnitS:'Per-unit rented machines inside the selected filters',
+rentCalT:'Monthly Rent Calendar',rentCalS:'Click a month to see that month\'s rent amounts per unit (from the PREV MONTH tab)',
+rentCalNone:'No data for this month yet',rentCalTot:'Total',
+rentTabT:'Monthly Rent Table',rentTabS:'Rent amounts per unit per month (PREV MONTH tab snapshot at build time)',
+rentLineNote:'Line view has no rented split — clear the line filter to see rentals.',
+rentMonNone:'Monthly rent data is not available (PREV MONTH tab could not be read at build time).',
+rentDayCalT:'Daily Rental Calendar',rentDayCalS:'Click any date to see that day\'s rented machines (from the RENTAL LOG tab). Log a day below to fill the calendar.',
+dayCalRefresh:'↻ Refresh log',dayCalTotal:'Total rented',dayCalNoLog:'No rental logged for this day',
+dayCalHint:'Daily log data comes from the RENTAL LOG tab via the same Apps Script URL as Edit Counts. If nothing loads, save the URL + password in ⚙️ Setup (open any card popup) and make sure the script file is the NEW version with the log action.',
+logFormT:'➕ Log Daily Rental',logDateL:'Date',logUnitL:'Unit',logTypeL:'Machine Type',logCountL:'Rented Count',logRemarksL:'Remarks',
+logSaveBtn:'💾 Save Log',
+logNeedFields:'❌ Date, Unit and Machine Type are required.',
+logNeedCount:'❌ Enter a valid Rented Count (0 or more).',
+logNeedSetup:'❌ Setup needed — open any card popup → ⚙️ Setup and save the Apps Script URL + password first.',
+logSaving:'⏳ Saving...',logSaved:'✅ Log saved!',
+logFail:'❌ Save failed: {e}'
+},bn:{
+brandTitle:'মেশিন <span>ইনভেন্টরি</span>',brandSub:'ডেক্কো ইশো গ্রুপ · রানিং · ভাড়া · অলস — DGL-1 · DRL · DFL · GGL · AFL · DGL-2',
+refreshBtn:'⟳ ডাটা রিফ্রেশ',filters:'⚙ ফিল্টার',unitH:'ইউনিট',lineH:'লাইন / সেকশন',
+lineHint:'একটি লাইন বাছলে শুধু ওই লাইনের মেশিন দেখাবে। লাইন বাছলে শুধু ওই লাইনের ইউনিট সিলেক্ট থাকবে।',
+typeH:'মেশিন টাইপ',typeSearchPh:'টাইপ খুঁজুন…',searchH:'মেশিন খুঁজুন',searchPh:'মেশিনের নাম লিখুন…',
+resetAll:'সব ফিল্টার রিসেট',tools:'টুলস',dark:'🌙 ডার্ক',light:'☀️ লাইট',langBtn:'🌐 English',
+selectAll:'সব বাছুন',clear:'মুছুন',allUnits:'সব ইউনিট ▾',noUnits:'কোনো ইউনিট বাছা হয়নি ▾',nUnits:'{n}টি ইউনিট বাছা হয়েছে ▾',
+allTypes:'সব মেশিন টাইপ ▾',noTypes:'কোনো মেশিন টাইপ বাছা হয়নি ▾',nTypes:'{n}টি মেশিন টাইপ বাছা হয়েছে ▾',allLines:'সব লাইন',
+kpiTotal:'মোট মেশিন',kpiRun:'রানিং',kpiRent:'ভাড়া',kpiIdle:'অলস',kpiTypes:'মেশিন টাইপ',kpiUnits:'নির্বাচিত ইউনিট',
+chipAllTypes:'সব টাইপ',chipUnits:'ইউনিট',chipInSheet:'শিটে আছে',chipAll:'সব',
+ovDonutT:'রানিং / ভাড়া / অলস',ovDonutS:'মোট মেশিনের ভাগ',
+ovUnitT:'ইউনিট অনুযায়ী মেশিন',ovUnitS:'নির্বাচিত ফিল্টারে প্রতি ইউনিটের মোট মেশিন',
+ovIdleT:'ইউনিট অনুযায়ী অলস মেশিন',ovIdleS:'অলস মেশিন কোথায় বেশি — দেখার মতো',
+ovInsT:'নজর দেওয়ার বিষয়',ovInsS:'নির্বাচিত ডাটা থেকে স্বয়ংক্রিয়ভাবে পাওয়া',
+ovTopT:'সেরা ১০ মেশিন টাইপ',ovTopS:'নির্বাচিত ফিল্টারে সবচেয়ে বেশি মোট',
+ovDualT:'একই সাথে অলস ও ভাড়া মেশিন',ovDualS:'একই টাইপের মেশিন ভাড়াও আছে, অলসও আছে — কেন অলস পড়ে আছে দেখার মতো',
+detT:'মেশিনের বিস্তারিত',detS:'নির্বাচিত ফিল্টারে {n}টি মেশিন টাইপ — মোট অনুযায়ী সাজানো, টেবিলের ভেতরে স্ক্রল করুন',
+unitT:'ইউনিট সামারি',unitS:'নির্বাচিত ফিল্টারে প্রতি ইউনিটের রানিং / ভাড়া / অলস',
+unitRentT:'ইউনিট অনুযায়ী ভাড়া মেশিন',unitRentS:'প্রতি ইউনিটের ভাড়া মেশিন',
+unitShareT:'ইউনিট অনুযায়ী মেশিনের ভাগ',unitShareS:'মোট মেশিনের ভাগ',
+navOv:'ওভারভিউ',navList:'মেশিনের বিস্তারিত',navUnit:'ইউনিট সামারি',navRent:'ভাড়া বিশ্লেষণ',
+foot:'ডিজাইন: ইউটিলিটি ও ডেভেলপমেন্ট ড্যাশবোর্ডের মতোই (লাইট থিম) · ডাটা: গুগল শিট DATA ট্যাব, বানানোর সময়ের স্ন্যাপশট · লাইভ রিফ্রেশ শিট থেকে ডাটা আনে',
+thSL:'ক্রমিক',thType:'মেশিন টাইপ',thRun:'রানিং',thRent:'ভাড়া',thIdle:'অলস',thTot:'মোট',thRentAmt:'ভাড়ার পরিমাণ',
+thShare:'ভাগ',thIdlePct:'অলস %',thEdit:'এডিট',thUnit:'ইউনিট',
+nodata:'নির্বাচিত ফিল্টারে কোনো ডাটা নেই',
+lineNote:'লাইন ভিউ: {u} · {l} — সংখ্যাগুলো ওই লাইনে থাকা মেশিন। ভাড়া / অলস সেকশন অনুযায়ী লেখা হয়, লাইন অনুযায়ী নয়, তাই এখানে ০ দেখাচ্ছে।',
+insZeroT:'{n}টি মেশিন টাইপ এখন শূন্য',insZeroB:'নির্বাচিত ফিল্টারে এই টাইপগুলোর কোনো রানিং, ভাড়া বা অলস মেশিন নেই — যেমন {list}।',
+insIdleT:'সবচেয়ে বেশি অলস: {type} — {n}টি অলস',insIdleB:'রানিং <b>{r}</b> · ভাড়া <b>{e}</b> · মোট <b>{t}</b>। কেন এতগুলো অলস পড়ে আছে দেখা দরকার।',
+insUnitIdleT:'{u}-তে সবচেয়ে বেশি অলস মেশিন ({n}টি)',insUnitIdleB:'ইউনিটের মোট <b>{t}</b> · রানিং <b>{r}</b> · ভাড়া <b>{e}</b>।',
+insRentT:'সবচেয়ে বেশি ভাড়া: {type} — {n}টি ভাড়া',insRentB:'রানিং <b>{r}</b> · অলস <b>{i}</b> · মোট <b>{t}</b>।',
+insMore:' ও আরও {n}টি',insNothing:'নির্বাচিত ডাটায় চোখে পড়ার মতো কিছু নেই।',
+dualNone:'নির্বাচিত ফিল্টারে কোনো মেশিন একই সাথে ভাড়া ও অলস নেই',dualRent:'ভাড়া',dualIdle:'অলস',
+cpList:'📋 লিস্ট',cpEdit:'✏️ সংখ্যা এডিট',cpSetup:'⚙️ সেটআপ',cpClose:'✖ বন্ধ',
+cpTitleRun:'▶ রানিং মেশিন',cpTitleRent:'↔ ভাড়া মেশিন',cpTitleIdle:'⏸️ অলস মেশিন',cpTitleTot:'⬢ মোট মেশিন',
+cpTitleTypes:'⚙ মেশিন টাইপ',cpTitleUnits:'🏭 ইউনিট সামারি',cpTypes:'টি টাইপ',cpAllUnits:'সব ইউনিট',
+cpEditH:'শিটে একটি সংখ্যা এডিট করুন — ঠিক ওই সেলে লেখা হবে (ইউনিট টোটাল বা লাইন সেল)। সেভের পর ড্যাশবোর্ড নিজে রিফ্রেশ হবে।',
+cpTypeL:'মেশিন টাইপ',cpUnitL:'ইউনিট',cpTargetL:'কী এডিট করবেন',cpTargetUnit:'ইউনিট টোটাল (রানিং / ভাড়া / অলস)',cpTargetLine:'লাইন / সেকশন সংখ্যা',
+cpFieldL:'ফিল্ড',cpLineL:'লাইন / সেকশন',cpValL:'নতুন সংখ্যা',cpSaveBtn:'💾 সংখ্যা সেভ করুন',
+cpSetupH:'অ্যাপস স্ক্রিপ্ট ওয়েব অ্যাপ URL — শুধু এই শিটের জন্য (Machine_Dashboard_Entry_Code.gs ফাইল deploy করে URL এখানে একবার বসান)। শুধু এই ডিভাইসে সেভ থাকবে।',
+cpUrlL:'ওয়েব অ্যাপ URL (শেষে /exec থাকবে)',cpPassL:'পাসওয়ার্ড',cpRemember:'এই ডিভাইসে মনে রাখুন',cpSaveSetup:'💾 সেটআপ সেভ করুন',
+msgType:'❌ মেশিন টাইপ বাছুন।',msgCount:'❌ নতুন সংখ্যা দিন।',msgSetupUrl:'❌ প্রথমে ⚙️ সেটআপ খুলে অ্যাপস স্ক্রিপ্ট URL সেভ করুন।',
+msgToken:'❌ প্রথমে ⚙️ সেটআপে পাসওয়ার্ড দিন।',msgSaving:'⏳ সেভ হচ্ছে...',msgSaved:'✅ সেভ হয়েছে! রিফ্রেশ হচ্ছে...',
+msgSaveFail:'❌ সেভ হয়নি: {e}',msgSetupSaved:'✅ সেটআপ সেভ হয়েছে।',msgNeedUrl:'❌ ওয়েব অ্যাপ URL দিন।',
+liveFetching:'⏳ শিট থেকে ডাটা আনা হচ্ছে...',liveFail:'⚪ স্ন্যাপশট ডাটা (শিট থেকে আনা যায়নি)',
+liveAlert:'শিট থেকে লাইভ ডাটা আনা যায়নি — আগের ডাটাই দেখাচ্ছে। ইন্টারনেট কানেকশন চেক করুন।',
+cpFoot:'সূত্র: মেশিন ইনভেন্টরি ড্যাশবোর্ড · গুগল শিট DATA ট্যাব · প্রিন্টের তারিখ {d}',
+rentKpiTot:'মোট ভাড়া',rentKpiTypes:'ভাড়া টাইপ',rentKpiAmt:'ভাড়ার পরিমাণ',rentKpiUnits:'ভাড়া আছে এমন ইউনিট',
+rentByUnitT:'ইউনিট অনুযায়ী ভাড়া',rentByUnitS:'প্রতি ইউনিটের ভাড়া মেশিন',
+rentTopT:'সেরা ১০ ভাড়া টাইপ',rentTopS:'নির্বাচিত ফিল্টারে সবচেয়ে বেশি ভাড়া',
+rentListT:'ভাড়া টাইপের তালিকা',rentListS:'নির্বাচিত ফিল্টারে ভাড়া মেশিন আছে এমন সব টাইপ',
+rentUnitT:'ইউনিট অনুযায়ী ভাড়া',rentUnitS:'নির্বাচিত ফিল্টারে প্রতি ইউনিটের ভাড়া মেশিন',
+rentCalT:'মাসিক ভাড়া ক্যালেন্ডার',rentCalS:'একটি মাসে ক্লিক করলে ওই মাসের প্রতি ইউনিটের ভাড়ার পরিমাণ দেখাবে (PREV MONTH ট্যাব থেকে)',
+rentCalNone:'এই মাসের ডাটা এখনো নেই',rentCalTot:'মোট',
+rentTabT:'মাসিক ভাড়ার টেবিল',rentTabS:'প্রতি মাসে প্রতি ইউনিটের ভাড়ার পরিমাণ (PREV MONTH ট্যাব, বানানোর সময়ের স্ন্যাপশট)',
+rentLineNote:'লাইন ভিউতে ভাড়ার ভাগ নেই — ভাড়া দেখতে লাইন ফিল্টার তুলে দিন।',
+rentMonNone:'মাসিক ভাড়ার ডাটা পাওয়া যায়নি (বানানোর সময় PREV MONTH ট্যাব পড়া যায়নি)।',
+rentDayCalT:'দৈনিক ভাড়া ক্যালেন্ডার',rentDayCalS:'যেকোনো তারিখে ক্লিক করলে ওই দিনের ভাড়া মেশিন দেখাবে (RENTAL LOG ট্যাব থেকে)। নিচে লগ দিলে ক্যালেন্ডার ভরবে।',
+dayCalRefresh:'↻ লগ রিফ্রেশ',dayCalTotal:'মোট ভাড়া',dayCalNoLog:'এই দিনের কোনো ভাড়া লগ নেই',
+dayCalHint:'দৈনিক লগ ডাটা RENTAL LOG ট্যাব থেকে আসে, Edit Counts-এর অ্যাপস স্ক্রিপ্ট URL দিয়েই। কিছু না এলে যেকোনো কার্ড popup থেকে ⚙️ Setup-এ URL + পাসওয়ার্ড সেভ করুন, আর স্ক্রিপ্ট ফাইলটা নতুন ভার্সন (log action সহ) আছে কিনা দেখুন।',
+logFormT:'➕ দৈনিক ভাড়া লগ',logDateL:'তারিখ',logUnitL:'ইউনিট',logTypeL:'মেশিন টাইপ',logCountL:'ভাড়া সংখ্যা',logRemarksL:'মন্তব্য',
+logSaveBtn:'💾 লগ সেভ করুন',
+logNeedFields:'❌ তারিখ, ইউনিট আর মেশিন টাইপ দিতে হবে।',
+logNeedCount:'❌ সঠিক ভাড়া সংখ্যা দিন (০ বা তার বেশি)।',
+logNeedSetup:'❌ প্রথমে সেটআপ দরকার — যেকোনো কার্ড popup থেকে ⚙️ Setup-এ Apps Script URL + পাসওয়ার্ড সেভ করুন।',
+logSaving:'⏳ সেভ হচ্ছে...',logSaved:'✅ লগ সেভ হয়েছে!',
+logFail:'❌ সেভ হয়নি: {e}'
+}};
+let LANG='en';
+try{ LANG = localStorage.getItem('mc-lang')==='bn' ? 'bn' : 'en'; }catch(e){}
+const T = k => (STR[LANG]||STR.en)[k] || STR.en[k] || k;
+const Tf = (k, o) => { let s=T(k); for(const p in o) s=s.split('{'+p+'}').join(o[p]); return s; };
+const MONTHS = {en:['January','February','March','April','May','June','July','August','September','October','November','December'],
+  bn:['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর']};
+const monthName = i => (MONTHS[LANG]||MONTHS.en)[i] || MONTHS.en[i];
+function applyLang(){
+  document.querySelectorAll('[data-t]').forEach(e=>{ e.textContent=T(e.getAttribute('data-t')); });
+  document.querySelectorAll('[data-th]').forEach(e=>{ e.innerHTML=T(e.getAttribute('data-th')); });
+  document.querySelectorAll('[data-t-ph]').forEach(e=>{ e.placeholder=T(e.getAttribute('data-t-ph')); });
+  document.title = LANG==='bn' ? 'মেশিন ইনভেন্টরি — ডেক্কো ইশো গ্রুপ' : 'Machine Inventory — DEKKO ISHO Group';
+  const lb=document.getElementById('btnLang'); if(lb) lb.textContent=T('langBtn');
+  const mb=document.getElementById('btnMode'); if(mb) mb.textContent = darkMode?T('light'):T('dark');
+}
+function toggleLang(){ LANG = LANG==='en' ? 'bn' : 'en';
+  try{ localStorage.setItem('mc-lang', LANG); }catch(e){}
+  applyLang(); render(); if(document.getElementById('cpModal').style.display==='block') renderCardPopup();
+}
+let darkMode=false;
+try{ darkMode = localStorage.getItem('ud-theme')==='dark'; }catch(e){}
+function thc(){ return darkMode
+  ? {grid:'#22345A', mut:'#8499BC', track:'#1B2C4D', ctr:'#E8EEF9', hlab:'#C4D2E8', nodata:'#8499BC'}
+  : {grid:'#E6ECF3', mut:'#94A3B8', track:'#EDF2F7', ctr:'#16324F', hlab:'#33475C', nodata:'#94A3B8'}; }
+function applyTheme(){ document.documentElement.dataset.theme = darkMode?'dark':'light';
+  const b=document.getElementById('btnMode'); if(b) b.textContent = darkMode?T('light'):T('dark'); }
+function toggleMode(){ darkMode=!darkMode;
+  try{ localStorage.setItem('ud-theme', darkMode?'dark':'light'); }catch(e){}
+  applyTheme(); render(); }
+const selU = new Set(D.units);
+const selT = new Set(D.rows.map(r=>r.sl));
+function ddTypeLabel(){
+  if(selT.size===D.rows.length) return T('allTypes');
+  if(selT.size===0) return T('noTypes');
+  return Tf('nTypes', {n: selT.size}); }
+function buildTypeList(){
+  const q=((document.getElementById('fTypeSearch')||{}).value||'').trim().toLowerCase();
+  const el=document.getElementById('fTypes'); if(!el) return;
+  el.innerHTML = D.rows.filter(r=>(!q || r.type.toLowerCase().includes(q))).map(r =>
+    `<label class="fitem"><input type="checkbox" ${selT.has(r.sl)?'checked':''} onchange="togT('${r.sl}',this.checked)"> ${esc(r.sl)} · ${esc(r.type)}</label>`).join('');
+}
+function togT(sl,on){ on?selT.add(sl):selT.delete(sl);
+  const b=document.getElementById('ddTypeBtn'); if(b) b.textContent=ddTypeLabel(); render(); }
+let selLine = null, prevSelU = null;
+function lineByIdx(i){ return (D.lineCols||[]).find(l=>l[0]===i); }
+function buildLineOpts(){
+  const s=document.getElementById('selLine'); if(!s) return;
+  if(selLine!==null){ const ln=lineByIdx(selLine); if(!ln || !selU.has(ln[1])){ selLine=null; prevSelU=null; } }
+  let html='<option value="">'+T('allLines')+'</option>';
+  D.units.forEach(u=>{
+    if(!selU.has(u)) return;
+    const opts=(D.lineCols||[]).filter(l=>l[1]===u);
+    if(!opts.length) return;
+    html+=`<optgroup label="${u}">`+opts.map(l=>`<option value="${l[0]}" ${selLine===l[0]?'selected':''}>${esc(l[2])}</option>`).join('')+'</optgroup>';
+  });
+  s.innerHTML=html;
+}
+function setLine(v){
+  if(!v){ selLine=null; if(prevSelU){ selU.clear(); prevSelU.forEach(u=>selU.add(u)); prevSelU=null; } buildFilters(); render(); return; }
+  const ln=lineByIdx(parseInt(v,10)); if(!ln) return;
+  prevSelU=new Set(selU); selLine=ln[0];
+  selU.clear(); selU.add(ln[1]);
+  buildFilters(); render();
+}
+const fmtN = v => { const r=Math.round(v*10)/10; return r.toLocaleString('en-US',{maximumFractionDigits:1}); };
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function buildFilters(){
+  document.getElementById('fUnits').innerHTML = D.units.map(u =>
+    `<label class="fitem"><input type="checkbox" ${selU.has(u)?'checked':''} onchange="togU('${u}',this.checked)"> ${u}</label>`).join('');
+  buildLineOpts();
+  buildTypeList();
+}
+function togU(u,on){ on?selU.add(u):selU.delete(u); buildLineOpts(); render(); }
+function resetAll(){ D.units.forEach(u=>selU.add(u));
+  selT.clear(); D.rows.forEach(r=>selT.add(r.sl));
+  const q=document.getElementById('qSearch'); if(q) q.value='';
+  const ft=document.getElementById('fTypeSearch'); if(ft) ft.value='';
+  buildFilters(); render(); }
+function toggleDD(which,ev){ ev.stopPropagation();
+  const p=document.getElementById('dd'+which+'Panel');
+  p.style.display = p.style.display==='none' ? 'block' : 'none'; }
+function pickAll(kind,on){
+  if(kind==='T'){ selT.clear(); if(on) D.rows.forEach(r=>selT.add(r.sl));
+    buildTypeList();
+    const b=document.getElementById('ddTypeBtn'); if(b) b.textContent=ddTypeLabel();
+    render(); return; }
+  selU.clear(); if(on) D.units.forEach(u=>selU.add(u));
+  buildFilters(); render(); }
+document.addEventListener('click', e=>{ if(!e.target.closest('.dd')){
+  const p=document.getElementById('ddUnitPanel'); if(p) p.style.display='none';
+  const t=document.getElementById('ddTypePanel'); if(t) t.style.display='none'; } });
+function ddLabel(sel, all, noun){
+  if(sel.size===all.length) return T('allUnits');
+  if(sel.size===0) return T('noUnits');
+  const arr=[...sel]; if(arr.length<=2) return arr.join(', ')+' ▾';
+  return Tf('nUnits', {n: sel.size}); }
+function agg(){
+  const q=(document.getElementById('qSearch')||{}).value.trim().toLowerCase();
+  const rows = D.rows.filter(r => selT.has(r.sl) && (!q || r.type.toLowerCase().includes(q))).map(r=>{
+    let run=0, rent=0, idle=0, rentAmt=r.rentAmt;
+    if(selLine!==null){ run = (r.ln && r.ln[selLine]) || 0; rentAmt=0; }
+    else selU.forEach(u=>{ const v=r.u[u]||[0,0,0]; run+=v[0]; rent+=v[1]; idle+=v[2]; });
+    return {sl:r.sl, type:r.type, rentAmt, run, rent, idle, tot: run+rent+idle};
+  });
+  let tr=0, te=0, ti=0;
+  rows.forEach(r=>{ tr+=r.run; te+=r.rent; ti+=r.idle; });
+  // per-unit totals, recomputed from the source rows:
+  const byU2={};
+  D.units.forEach(u=>{ byU2[u]={run:0, rent:0, idle:0, tot:0}; });
+  D.rows.forEach(src=>{
+    if(q && !src.type.toLowerCase().includes(q)) return;
+    if(selLine!==null){ const ln=lineByIdx(selLine);
+      if(ln && selU.has(ln[1])){ const v=(src.ln && src.ln[selLine]) || 0;
+        byU2[ln[1]].run+=v; byU2[ln[1]].tot+=v; }
+      return; }
+    selU.forEach(u=>{ const v=src.u[u]||[0,0,0];
+      byU2[u].run+=v[0]; byU2[u].rent+=v[1]; byU2[u].idle+=v[2]; byU2[u].tot+=v[0]+v[1]+v[2]; });
+  });
+  return {rows, tr, te, ti, tot: tr+te+ti, byUnit: byU2,
+    nz: rows.filter(r=>r.tot>0).length};
+}
+function donutSVG(data, total){
+  data=data.filter(d=>d[1]>0).sort((a,b)=>b[1]-a[1]);
+  if(!data.length||total<=0) return '<p style="color:'+thc().nodata+';font-size:12px">No data</p>';
+  const cx=88,cy=88,r=76,ir=46; let a0=-90, paths='';
+  data.forEach((d,i)=>{ const frac=d[1]/total, a1=a0+frac*360;
+    const pt=(a,rr)=>[cx+rr*Math.cos(a*Math.PI/180), cy+rr*Math.sin(a*Math.PI/180)];
+    const [x0,y0]=pt(a0,r),[x1,y1]=pt(a1,r),[x2,y2]=pt(a1,ir),[x3,y3]=pt(a0,ir), lg=frac>0.5?1:0;
+    if(frac>0.997) paths+=`<circle cx="${cx}" cy="${cy}" r="${(r+ir)/2}" fill="none" stroke="${PAL[i%PAL.length]}" stroke-width="${r-ir}"/>`;
+    else paths+=`<path d="M${x0},${y0} A${r},${r} 0 ${lg} 1 ${x1},${y1} L${x2},${y2} A${ir},${ir} 0 ${lg} 0 ${x3},${y3} Z" fill="${PAL[i%PAL.length]}"><title>${esc(d[0])}: ${fmtN(d[1])}</title></path>`;
+    a0=a1; });
+  const leg=data.map((d,i)=>`<div><i style="background:${PAL[i%PAL.length]}"></i>${esc(d[0])} · ${(d[1]/total*100).toFixed(1)}%</div>`).join('');
+  return `<svg viewBox="0 0 176 176" width="100%" style="max-width:180px;display:block;margin:0 auto">${paths}<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="${thc().ctr}">${fmtN(total)}</text></svg><div class="leg">${leg}</div>`;
+}
+function hbarSVG(data){
+  data=data.filter(d=>d[1]>0).sort((a,b)=>b[1]-a[1]);
+  if(!data.length) return '<p style="color:'+thc().nodata+';font-size:12px">No data</p>';
+  const mx=Math.max(...data.map(d=>d[1]));
+  return data.map((d,i)=>`<div style="display:grid;grid-template-columns:110px 1fr 110px;align-items:center;gap:9px;margin:8px 0">
+    <div style="font-size:12px;color:${thc().hlab};white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(d[0])}">${esc(d[0])}</div>
+    <div style="background:${thc().track};border-radius:5px;height:15px"><div style="width:${Math.max(2,d[1]/mx*100)}%;height:15px;border-radius:5px;background:${PAL[i%PAL.length]}"></div></div>
+    <div style="font-size:12px;text-align:right;color:${thc().ctr};font-weight:600;font-variant-numeric:tabular-nums">${fmtN(d[1])}</div></div>`).join('');
+}
+function dualBarHTML(rows){
+  const d=rows.filter(r=>r.rent>0&&r.idle>0).sort((x,y)=>(y.rent+y.idle)-(x.rent+x.idle)).slice(0,10);
+  if(!d.length) return '<p style="color:'+thc().nodata+';font-size:12px">'+T('dualNone')+'</p>';
+  const mx=Math.max(...d.flatMap(r=>[r.rent,r.idle]));
+  const bar=(label,val,color)=>`<div style="display:grid;grid-template-columns:64px 1fr 80px;align-items:center;gap:9px;margin:3px 0">
+    <div style="font-size:11px;color:${thc().mut}">${label}</div>
+    <div style="background:${thc().track};border-radius:5px;height:13px"><div style="width:${Math.max(2,val/mx*100)}%;height:13px;border-radius:5px;background:${color}"></div></div>
+    <div style="font-size:12px;text-align:right;font-weight:600;color:${thc().ctr};font-variant-numeric:tabular-nums">${fmtN(val)}</div></div>`;
+  return d.map(r=>`<div style="margin:12px 0 2px;font-size:12.5px;font-weight:700;color:${thc().ctr}">${esc(r.type)}</div>`
+    + bar(T('dualRent'),r.rent,'#118DFF') + bar(T('dualIdle'),r.idle,'#EC268F')).join('');
+}
+function setHTML(id, html){ const e=document.getElementById(id); if(e) e.innerHTML=html; }
+function render(){
+  const a=agg();
+  const lnEl=document.getElementById('lineNote');
+  if(lnEl){ if(selLine!==null){ const ln=lineByIdx(selLine);
+      lnEl.style.display='block';
+      lnEl.innerHTML=`📌 ${Tf('lineNote', {u: ln[1], l: esc(ln[2])})}`;
+    } else lnEl.style.display='none'; }
+  const ub=document.getElementById('ddUnitBtn'); if(ub) ub.textContent=ddLabel(selU, D.units, 'units');
+  const tb=document.getElementById('ddTypeBtn'); if(tb) tb.textContent=ddTypeLabel();
+  const nodata='<p style="color:'+thc().nodata+';font-size:12px">'+T('nodata')+'</p>';
+  const cards=[
+    {l:T('kpiTotal'), v:fmtN(a.tot), c:`<span class="chip n">${T('chipAllTypes')}</span>`, ic:'⬢', bg:'#DBEAFE', fg:'#1D4ED8', act:'tot'},
+    {l:T('kpiRun'), v:fmtN(a.tr), c:`<span class="chip g">${a.tot?(a.tr/a.tot*100).toFixed(1)+'%':''}</span>`, ic:'▶', bg:'#DCF5E5', fg:'#15803D', act:'run'},
+    {l:T('kpiRent'), v:fmtN(a.te), c:`<span class="chip b">${a.tot?(a.te/a.tot*100).toFixed(1)+'%':''}</span>`, ic:'↔', bg:'#DBEAFE', fg:'#1D4ED8', act:'rent'},
+    {l:T('kpiIdle'), v:fmtN(a.ti), c:`<span class="chip r">${a.tot?(a.ti/a.tot*100).toFixed(1)+'%':''}</span>`, ic:'⏸️', bg:'#FDE3E3', fg:'#DC2626', act:'idle'},
+    {l:T('kpiTypes'), v:fmtN(a.nz), c:`<span class="chip n">${D.rows.length} ${T('chipInSheet')}</span>`, ic:'⚙', bg:'#EDE9FE', fg:'#6D28D9', act:'types'},
+    {l:T('kpiUnits'), v:selU.size+' / '+D.units.length, c:`<span class="chip n">${T('chipUnits')}</span>`, ic:'🏭', bg:'#FEF3C7', fg:'#B45309', act:'units'},
+  ];
+  setHTML('kpis', cards.map(c=>
+    `<div class="kpi click" onclick="openCardPopup('${c.act}')"><div class="ic" style="background:${c.bg};color:${c.fg}">${c.ic}</div><div class="l">${c.l}</div><div class="v">${c.v}</div>${c.c}</div>`).join(''));
+  setHTML('chDonut', donutSVG([[T('kpiRun'),a.tr],[T('kpiRent'),a.te],[T('kpiIdle'),a.ti]], a.tot));
+  setHTML('chBarUnit', hbarSVG(Object.entries(a.byUnit).map(([u,x])=>[u,x.tot])));
+  setHTML('chBarIdle', hbarSVG(Object.entries(a.byUnit).map(([u,x])=>[u,x.idle])));
+  setHTML('chBarRent', hbarSVG(Object.entries(a.byUnit).map(([u,x])=>[u,x.rent])));
+  setHTML('chDonutUnit', donutSVG(Object.entries(a.byUnit).map(([u,x])=>[u,x.tot]), a.tot));
+  const zero=a.rows.filter(r=>r.tot===0);
+  const topIdle=[...a.rows].filter(r=>r.idle>0).sort((x,y)=>y.idle-x.idle)[0];
+  const topUnit=Object.entries(a.byUnit).sort((x,y)=>y[1].idle-x[1].idle)[0];
+  const ins=[];
+  if(zero.length) ins.push({i:'🔕', h:Tf('insZeroT', {n: zero.length}), p:Tf('insZeroB', {list: zero.slice(0,4).map(r=>esc(r.type)).join('</b>, <b>')+(zero.length>4?Tf('insMore', {n: zero.length-4}):'')})});
+  if(topIdle) ins.push({i:'⏸️', h:Tf('insIdleT', {type: esc(topIdle.type), n: fmtN(topIdle.idle)}), p:Tf('insIdleB', {r: fmtN(topIdle.run), e: fmtN(topIdle.rent), t: fmtN(topIdle.tot)})});
+  if(topUnit && topUnit[1].idle>0) ins.push({i:'🏭', h:Tf('insUnitIdleT', {u: topUnit[0], n: fmtN(topUnit[1].idle)}), p:Tf('insUnitIdleB', {t: fmtN(topUnit[1].tot), r: fmtN(topUnit[1].run), e: fmtN(topUnit[1].rent)})});
+  const topRent=[...a.rows].filter(r=>r.rent>0).sort((x,y)=>y.rent-x.rent)[0];
+  if(topRent) ins.push({i:'↔', h:Tf('insRentT', {type: esc(topRent.type), n: fmtN(topRent.rent)}), p:Tf('insRentB', {r: fmtN(topRent.run), i: fmtN(topRent.idle), t: fmtN(topRent.tot)})});
+  setHTML('insights', ins.length? ins.map(x=>`<div class="insight"><div class="ii">${x.i}</div><div><h4>${x.h}</h4><p>${x.p}</p></div></div>`).join('') : '<p style="color:'+thc().nodata+';font-size:12px">'+T('insNothing')+'</p>');
+  const top10=[...a.rows].sort((x,y)=>y.tot-x.tot).slice(0,10);
+  setHTML('tblTop', top10.length?
+    `<table><tr><th>${T('thType')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th></tr>`+
+    top10.map(r=>`<tr><td>${esc(r.type)}</td><td class="num">${fmtN(r.run)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${fmtN(r.idle)}</td><td class="num"><b>${fmtN(r.tot)}</b></td></tr>`).join('')+`</table>`:nodata);
+  setHTML('chDual', dualBarHTML(a.rows));
+  const sub=document.getElementById('tblListSub'); if(sub) sub.textContent=Tf('detS', {n: a.rows.length});
+  setHTML('detChips', [['all',T('chipAll')],['run',T('kpiRun')],['rent',T('kpiRent')],['idle',T('kpiIdle')]].map(([m,l])=>
+    `<button class="cpbtn ${detMetric===m?'pri':''}" onclick="setDetMetric('${m}')">${l}</button>`).join(''));
+  let sorted=[...a.rows];
+  if(detMetric==='run') sorted=sorted.filter(r=>r.run>0);
+  else if(detMetric==='rent') sorted=sorted.filter(r=>r.rent>0);
+  else if(detMetric==='idle') sorted=sorted.filter(r=>r.idle>0);
+  sorted.sort((x,y)=>y.tot-x.tot);
+  setHTML('tblList', sorted.length?
+    `<table><tr><th>${T('thSL')}</th><th>${T('thType')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th><th class="num">${T('thRentAmt')}</th></tr>`+
+    sorted.map(r=>`<tr><td>${esc(r.sl)}</td><td>${esc(r.type)}</td><td class="num">${fmtN(r.run)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${fmtN(r.idle)}</td><td class="num"><b>${fmtN(r.tot)}</b></td><td class="num">${r.rentAmt?fmtN(r.rentAmt):'—'}</td></tr>`).join('')+`</table>`:nodata);
+  const uRows=Object.entries(a.byUnit).sort((x,y)=>y[1].tot-x[1].tot);
+  setHTML('tblUnit', uRows.length?
+    `<table><tr><th>${T('thUnit')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th><th class="num">${T('thShare')}</th><th class="num">${T('thIdlePct')}</th></tr>`+
+    uRows.map(([u,x])=>`<tr><td><b>${u}</b></td><td class="num">${fmtN(x.run)}</td><td class="num">${fmtN(x.rent)}</td><td class="num">${fmtN(x.idle)}</td><td class="num">${fmtN(x.tot)}</td><td class="num">${a.tot?(x.tot/a.tot*100).toFixed(1)+'%':'—'}</td><td class="num">${x.tot?(x.idle/x.tot*100).toFixed(1)+'%':'—'}</td></tr>`).join('')+
+    `<tr class="tot"><td>${LANG==='en'?'TOTAL':T('thTot')}</td><td class="num">${fmtN(a.tr)}</td><td class="num">${fmtN(a.te)}</td><td class="num">${fmtN(a.ti)}</td><td class="num">${fmtN(a.tot)}</td><td class="num">100%</td><td class="num">${a.tot?(a.ti/a.tot*100).toFixed(1)+'%':'—'}</td></tr></table>`:nodata);
+  renderRent();
+}
+let detMetric='all';
+function setDetMetric(m){ detMetric=m; render(); }
+let rentCalSel=-1;
+function renderRent(){
+  const a=agg();
+  const rws=a.rows.filter(r=>r.rent>0);
+  const rTot=rws.reduce((s,r)=>s+r.rent,0);
+  const rAmt=rws.reduce((s,r)=>s+r.rentAmt,0);
+  const unitsWith=[...selU].filter(u=>a.byUnit[u].rent>0).length;
+  const rk=[
+    {l:T('rentKpiTot'), v:fmtN(rTot), c:`<span class="chip b">${T('rentKpiTypes')}: ${rws.length}</span>`, ic:'↔', bg:'#DBEAFE', fg:'#1D4ED8'},
+    {l:T('rentKpiTypes'), v:fmtN(rws.length), c:`<span class="chip n">${T('chipAllTypes')}: ${a.rows.length}</span>`, ic:'⚙', bg:'#EDE9FE', fg:'#6D28D9'},
+    {l:T('rentKpiAmt'), v:fmtN(rAmt), c:`<span class="chip n">${T('thTot')}: ${fmtN(a.rows.reduce((s,r)=>s+r.rentAmt,0))}</span>`, ic:'৳', bg:'#FEF3C7', fg:'#B45309'},
+    {l:T('rentKpiUnits'), v:unitsWith+' / '+selU.size, c:`<span class="chip n">${T('chipUnits')}</span>`, ic:'🏭', bg:'#DCF5E5', fg:'#15803D'},
+  ];
+  setHTML('rentKpis', rk.map(c=>
+    `<div class="kpi"><div class="ic" style="background:${c.bg};color:${c.fg}">${c.ic}</div><div class="l">${c.l}</div><div class="v">${c.v}</div>${c.c}</div>`).join(''));
+  const rnEl=document.getElementById('rentLineNote');
+  if(rnEl){ if(selLine!==null){ rnEl.style.display='block'; rnEl.innerHTML='📌 '+T('rentLineNote'); }
+    else rnEl.style.display='none'; }
+  const nodata='<p style="color:'+thc().nodata+';font-size:12px">'+T('nodata')+'</p>';
+  setHTML('rentBarUnit', hbarSVG([...selU].map(u=>[u,a.byUnit[u].rent])));
+  const topR=[...rws].sort((x,y)=>y.rent-x.rent).slice(0,10);
+  setHTML('rentTop', topR.length?
+    `<table><tr><th>${T('thType')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thRentAmt')}</th><th class="num">${T('thShare')}</th></tr>`+
+    topR.map(r=>`<tr><td>${esc(r.type)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${r.rentAmt?fmtN(r.rentAmt):'—'}</td><td class="num">${rTot?(r.rent/rTot*100).toFixed(1)+'%':'—'}</td></tr>`).join('')+`</table>`:nodata);
+  const srt=[...rws].sort((x,y)=>y.rent-x.rent);
+  setHTML('rentList', srt.length?
+    `<table><tr><th>${T('thSL')}</th><th>${T('thType')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thRentAmt')}</th><th class="num">${T('thShare')}</th></tr>`+
+    srt.map(r=>`<tr><td>${esc(r.sl)}</td><td>${esc(r.type)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${r.rentAmt?fmtN(r.rentAmt):'—'}</td><td class="num">${rTot?(r.rent/rTot*100).toFixed(1)+'%':'—'}</td></tr>`).join('')+`</table>`:nodata);
+  const ruAll=[...selU].map(u=>[u,a.byUnit[u]]);
+  setHTML('rentUnit', ruAll.length?
+    `<table><tr><th>${T('thUnit')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thShare')}</th></tr>`+
+    ruAll.map(([u,x])=>`<tr><td><b>${u}</b></td><td class="num">${fmtN(x.rent)}</td><td class="num">${rTot?(x.rent/rTot*100).toFixed(1)+'%':'—'}</td></tr>`).join('')+`</table>`:nodata);
+  const M=D.monthly;
+  if(!M){ setHTML('rentCal', '<p style="color:'+thc().nodata+';font-size:12px">'+T('rentMonNone')+'</p>');
+    setHTML('rentTab', ''); setHTML('rentCalDetail',''); return; }
+  const calMonths=M.months.map((m,i)=>{
+    const tot=[...selU].reduce((s,u)=>s+((M.data[u]||[])[i]||0),0);
+    const has=tot>0;
+    return `<button class="cpbtn ${rentCalSel===i?'pri':''}" style="flex:1 1 30%;padding:10px 6px;text-align:center" onclick="rentCalMonth(${i})"><b>${monthName(i)}</b><br><span style="font-size:11px">${has?fmtN(tot):'—'}</span></button>`;
+  }).join('');
+  setHTML('rentCal', `<div style="display:flex;flex-wrap:wrap;gap:8px">${calMonths}</div>`);
+  if(rentCalSel>=0) rentCalMonth(rentCalSel, true);
+  const mRows=[...selU].filter(u=>M.data[u]);
+  setHTML('rentTab', mRows.length?
+    `<table><tr><th>${T('thUnit')}</th>`+M.months.map((m,i)=>`<th class="num">${monthName(i)}</th>`).join('')+`<th class="num">${T('thTot')}</th></tr>`+
+    mRows.map(u=>{ const vals=M.data[u]; const tot=vals.reduce((s,v)=>s+v,0);
+      return `<tr><td><b>${u}</b></td>`+vals.map(v=>`<td class="num">${v?fmtN(v):'—'}</td>`).join('')+`<td class="num"><b>${fmtN(tot)}</b></td></tr>`; }).join('')+`</table>`:nodata);
+  renderDayCal();
+}
+// ---- Daily rental log (RENTAL LOG tab, same Apps Script URL as Edit Counts) ----
+let rentLogMap={}, rentLogLoaded=false, rentLogLoading=false;
+let dayCalYM=null, dayCalSel=null;
+function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function isoOf(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+function buildLogFormLists(){
+  const us=document.getElementById('logUnit');
+  if(us){ const v=us.value; us.innerHTML=D.units.map(u=>`<option>${u}</option>`).join(''); if(v) us.value=v; }
+  const ts=document.getElementById('logType');
+  if(ts){ const v=ts.value; ts.innerHTML=D.rows.map(r=>`<option value="${esc(r.sl)}">${esc(r.sl)} · ${esc(r.type)}</option>`).join(''); if(v) ts.value=v; }
+  const ds=document.getElementById('logDate');
+  if(ds && !ds.value) ds.value=todayISO();
+}
+async function fetchRentLog(force){
+  const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
+  if(!url || !token || rentLogLoading) return;
+  rentLogLoading=true;
+  try{
+    const q=new URLSearchParams({token, action:'getLog'});
+    const res=await fetch(url+'?'+q.toString()+'&cb='+Date.now());
+    const j=await res.json();
+    if(!j.ok) throw new Error(j.error||'unknown error');
+    rentLogMap={};
+    (j.rows||[]).forEach(r=>{
+      const iso=r[0], count=parseFloat(r[4])||0;
+      if(!rentLogMap[iso]) rentLogMap[iso]={total:0, entries:[]};
+      rentLogMap[iso].total+=count;
+      rentLogMap[iso].entries.push({unit:r[1], sl:r[2], type:r[3], count, remarks:r[5]||''});
+    });
+    Object.values(rentLogMap).forEach(d=>d.entries.sort((x,y)=>y.count-x.count));
+    rentLogLoaded=true;
+  }catch(e){ /* keep old cache; calendar shows the hint */ }
+  rentLogLoading=false;
+  renderDayCal();
+}
+function renderDayCal(){
+  buildLogFormLists();
+  if(!dayCalYM){ const d=new Date(); dayCalYM={y:d.getFullYear(), m:d.getMonth()}; }
+  if(!dayCalSel) dayCalSel=todayISO();
+  const {y, m}=dayCalYM;
+  const first=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+  const wd = LANG==='bn' ? ['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let cells='';
+  for(let i=0;i<first;i++) cells+='<div></div>';
+  for(let d=1; d<=dim; d++){
+    const iso=isoOf(y,m,d);
+    const info=rentLogMap[iso];
+    const has=info && info.total>0;
+    const sel=iso===dayCalSel;
+    cells+=`<button class="cpbtn ${sel?'pri':''}" style="padding:8px 2px;text-align:center;${has?'border-color:var(--brand);':''}" onclick="dayCalSelect('${iso}')"><b>${d}</b>${has?`<br><span style="font-size:11px">↔ ${fmtN(info.total)}</span>`:''}</button>`;
+  }
+  const nav=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+    <button class="cpbtn" onclick="dayCalMove(-1)">◀</button>
+    <b style="flex:1;text-align:center">${monthName(m)} ${y}</b>
+    <button class="cpbtn" onclick="dayCalMove(1)">▶</button>
+    <button class="cpbtn" onclick="fetchRentLog(true)">${T('dayCalRefresh')}</button></div>`;
+  setHTML('rentDayCal', nav+`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted);margin-bottom:4px">${wd.map(w=>`<div>${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${cells}</div>`+
+    (!rentLogLoaded?`<p style="font-size:12px;color:var(--muted);margin-top:10px">${T('dayCalHint')}</p>`:''));
+  const info=rentLogMap[dayCalSel];
+  if(info && info.total>0){
+    setHTML('rentDayDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${dayCalSel} — ${T('dayCalTotal')}: ${fmtN(info.total)}</b><table style="margin-top:8px"><tr><th>${T('thType')}</th><th>${T('thUnit')}</th><th class="num">${T('thRent')}</th><th>${T('logRemarksL')}</th></tr>`+
+      info.entries.map(e=>`<tr><td>${esc(e.type)}</td><td>${esc(e.unit)}</td><td class="num">${fmtN(e.count)}</td><td>${esc(e.remarks)}</td></tr>`).join('')+`</table></div>`);
+  } else {
+    setHTML('rentDayDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${dayCalSel}</b> — ${T('dayCalNoLog')}</div>`);
+  }
+}
+function dayCalMove(dir){
+  let {y, m}=dayCalYM; m+=dir;
+  if(m<0){ m=11; y--; } if(m>11){ m=0; y++; }
+  dayCalYM={y, m}; renderDayCal();
+}
+function dayCalSelect(iso){ dayCalSel=iso; renderDayCal(); }
+async function saveRentLog(){
+  const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
+  const msgEl=document.getElementById('logMsg');
+  const say=(m)=>{ if(msgEl) msgEl.textContent=m; };
+  const date=document.getElementById('logDate').value;
+  const unit=document.getElementById('logUnit').value;
+  const sl=document.getElementById('logType').value;
+  const type=(D.rows.find(r=>r.sl===sl)||{}).type||'';
+  const count=document.getElementById('logCount').value;
+  const remarks=document.getElementById('logRemarks').value||'';
+  if(!date || !unit || !sl){ say(T('logNeedFields')); return; }
+  if(count==='' || isNaN(parseFloat(count)) || parseFloat(count)<0){ say(T('logNeedCount')); return; }
+  if(!url || !token){ say(T('logNeedSetup')); return; }
+  const btn=document.getElementById('logSaveBtn'); if(btn) btn.disabled=true; say(T('logSaving'));
+  try{
+    const q=new URLSearchParams({token, action:'log', date, unit, sl, type, count, remarks});
+    const res=await fetch(url+'?'+q.toString()+'&cb='+Date.now());
+    const j=await res.json();
+    if(!j.ok) throw new Error(j.error||'unknown error');
+    say(T('logSaved'));
+    await fetchRentLog(true);
+    const d=new Date(date+'T00:00:00');
+    dayCalYM={y:d.getFullYear(), m:d.getMonth()}; dayCalSel=date; renderDayCal();
+  }catch(e){ say(Tf('logFail', {e: e.message})); }
+  if(btn) btn.disabled=false;
+}
+function rentCalMonth(i, silent){
+  rentCalSel=i;
+  const M=D.monthly; if(!M) return;
+  const tot=[...selU].reduce((s,u)=>s+((M.data[u]||[])[i]||0),0);
+  const rows=[...selU].filter(u=>M.data[u]).map(u=>`<tr><td><b>${u}</b></td><td class="num">${((M.data[u]||[])[i]||0)?fmtN((M.data[u]||[])[i]):'—'}</td></tr>`).join('');
+  setHTML('rentCalDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${monthName(i)} — ${T('rentCalTot')}: ${tot?fmtN(tot):T('rentCalNone')}</b><table style="margin-top:8px"><tr><th>${T('thUnit')}</th><th class="num">${T('rentKpiAmt')}</th></tr>${rows}</table></div>`);
+  if(!silent) renderRent();
+}
+let curView='ov';
+function switchView(v){ curView=v;
+  ['ov','list','unit','rent'].forEach(k=>{
+    const el=document.getElementById('view-'+k); if(el) el.classList.toggle('on', k===v);
+    const nv=document.getElementById('nav-'+k); if(nv) nv.classList.toggle('act', k===v); });
+  window.scrollTo({top:0, behavior:'smooth'}); }
+const SHEET_ID = '1QCBLrc-pt7D5UQSBQu_QmbRlRZYEtQ4I-Q5AiPMFFy0';
+const UNITS_ALL = ['DGL-1','DRL','DFL','GGL','AFL','DGL-2'];
+function parseCSV(t){
+  const rows=[]; let row=[], cur='', q=false;
+  for(let i=0;i<t.length;i++){ const ch=t[i];
+    if(q){ if(ch==='"'){ if(t[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else if(ch==='"') q=true;
+    else if(ch===','){ row.push(cur); cur=''; }
+    else if(ch==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
+    else if(ch!=='\r') cur+=ch; }
+  if(cur!==''||row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+function pNum(v){ v=(v||'').toString().replace(/,/g,'').trim(); if(!v) return 0;
+  const n=parseFloat(v); return isNaN(n)?0:n; }
+function normH(h){ return String(h||'').toUpperCase().replace(/[\s.\-]/g,''); }
+function detectCols(dh){
+  const out={};
+  UNITS_ALL.forEach(u=>{
+    const un=normH(u);
+    const rent=[], idle=[], run=[];
+    dh.forEach((h,i)=>{
+      if(h===un+',RENT' || h===un+',TRENT') rent.push(i);
+      if(h===un+',IDLE') idle.push(i);
+      if(h.startsWith(un+',') && (h.endsWith('TOTALRUNNING') || h.endsWith('TRUNNING'))) run.push(i);
+    });
+    if(rent.length && idle.length && run.length) out[u]=[rent[rent.length-1], idle[idle.length-1], run[run.length-1]];
+  });
+  const ra=dh.indexOf('RENTAMOUNT');
+  return {cols: out, rentAmt: ra>=0?ra:-1};
+}
+function detectLineCols(rawH, cols){
+  const dh=rawH.map(normH);
+  const starts=[];
+  UNITS_ALL.forEach(u=>{ const un=normH(u);
+    const s=dh.findIndex(h=>h.startsWith(un+','));
+    if(s>=0) starts.push([u,s]); });
+  const grandCandidates=['GTOTALRENTMC','GTOTALIDLEMC','GTOTALRUNINGMC','ALLMACHINES','RENTPERDAY','RENTAMOUNT'];
+  let grand=dh.length;
+  dh.forEach((h,i)=>{ if(grandCandidates.includes(h) && i<grand) grand=i; });
+  const out=[];
+  starts.forEach(([u,s],k)=>{
+    const e=(k+1<starts.length? starts[k+1][1]-1 : grand-1);
+    const summ=new Set(cols[u]||[]);
+    for(let i=s;i<=e;i++){
+      if(summ.has(i) || dh[i].includes('DETAILS')) continue;
+      const raw=rawH[i]||'';
+      const label=raw.includes(',')? raw.split(',').slice(1).join(',').trim() : raw.trim();
+      out.push([i,u,label]);
+    }
+  });
+  return out;
+}
+async function fetchTab(gid){
+  const url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid='+gid+'&cb='+Date.now();
+  const res=await fetch(url); if(!res.ok) throw new Error('fetch '+res.status);
+  return parseCSV(await res.text()); }
+async function refreshLive(manual){
+  const st=document.getElementById('liveStatus'), btn=document.getElementById('btnRefresh');
+  if(btn) btn.disabled=true;
+  if(st) st.textContent=T('liveFetching');
+  try{
+    const det=await fetchTab('1413040626');
+    const dh=det[1].map(normH);
+    const {cols, rentAmt}=detectCols(dh);
+    const units=UNITS_ALL.filter(u=>cols[u]);
+    if(!units.length) throw new Error('unit blocks not detected');
+    const lineCols=detectLineCols(det[1], cols);
+    const rows=[];
+    for(let i=2;i<det.length;i++){ const r=det[i];
+      const type=(r[1]||'').trim(); if(!type) continue;
+      const u={};
+      units.forEach(unit=>{ const c=cols[unit];
+        u[unit]=[pNum(r[c[2]]), pNum(r[c[0]]), pNum(r[c[1]])]; });
+      const ln={};
+      lineCols.forEach(lc=>{ const v=pNum(r[lc[0]]); if(v!==0) ln[lc[0]]=v; });
+      rows.push({sl:(r[0]||'').trim(), type, u, ln,
+        rentAmt: rentAmt>=0?pNum(r[rentAmt]):0}); }
+    if(!rows.length) throw new Error('no rows');
+    const oldSl=new Set(D.rows.map(r=>r.sl));
+    rows.forEach(r=>{ if(!oldSl.has(r.sl)) selT.add(r.sl); });
+    units.forEach(u=>{ if(!D.units.includes(u)) selU.add(u); });
+    D={rows, units, lineCols, monthly: D.monthly};
+    buildFilters(); render();
+    if(st) st.innerHTML='🟢 Live · updated '+new Date().toLocaleTimeString('en-GB');
+  }catch(e){
+    if(st) st.innerHTML=T('liveFail');
+    if(manual) alert(T('liveAlert'));
+  }
+  if(btn) btn.disabled=false;
+}
+let cpMetric='run', cpTab='list', cpUnit='all';
+function cpRows(){
+  const q=(document.getElementById('qSearch')||{}).value.trim().toLowerCase();
+  return D.rows.filter(r=>selT.has(r.sl) && (!q||r.type.toLowerCase().includes(q))).map(r=>{
+    let run=0,rent=0,idle=0;
+    if(selLine!==null){ const ln=lineByIdx(selLine);
+      if(cpUnit==='all'||cpUnit===ln[1]) run=(r.ln&&r.ln[selLine])||0;
+    } else if(cpUnit==='all'){ selU.forEach(u=>{ const v=r.u[u]||[0,0,0]; run+=v[0]; rent+=v[1]; idle+=v[2]; }); }
+    else { const v=r.u[cpUnit]||[0,0,0]; run=v[0]; rent=v[1]; idle=v[2]; }
+    return {sl:r.sl,type:r.type,run,rent,idle,tot:run+rent+idle};
+  });
+}
+function cpSetUnit(u){ cpUnit=u; renderCardPopup(); }
+function cpGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+function cpSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function cpSay(msg, kind){ const e=document.getElementById('cpMsg');
+  e.textContent=msg; e.className='cpmsg'+(kind?' '+kind:''); }
+function toggleCpSettings(){ const e=document.getElementById('cpSettings');
+  const show=e.style.display==='none';
+  if(show){ document.getElementById('cpUrl').value=cpGet('mc-entry-url');
+    document.getElementById('cpToken').value=cpGet('mc-entry-token'); }
+  e.style.display=show?'block':'none'; }
+function cpSaveSetup(){
+  const url=document.getElementById('cpUrl').value.trim();
+  const token=document.getElementById('cpToken').value;
+  if(!url){ cpSay(T('msgNeedUrl'),'err'); return; }
+  cpSet('mc-entry-url',url);
+  if(document.getElementById('cpRemember').checked) cpSet('mc-entry-token',token);
+  cpSay(T('msgSetupSaved'),'ok');
+  document.getElementById('cpSettings').style.display='none';
+}
+function openCardPopup(m){ cpMetric=m; cpTab='list'; cpUnit='all';
+  document.getElementById('cpModal').style.display='block'; document.body.style.overflow='hidden';
+  cpSetTab('list'); }
+function closeCardPopup(){ document.getElementById('cpModal').style.display='none'; document.body.style.overflow=''; }
+function cpSetTab(t){ cpTab=t;
+  document.getElementById('cpTabList').className='cpbtn'+(t==='list'?' pri':'');
+  document.getElementById('cpTabEdit').className='cpbtn'+(t==='edit'?' pri':'');
+  document.getElementById('cpTable').style.display=t==='list'?'block':'none';
+  document.getElementById('cpEditForm').style.display=t==='edit'?'block':'none';
+  if(t==='edit') cpBuildEditLists(); else renderCardPopup();
+}
+function renderCardPopup(){
+  const a=agg();
+  const titles={run:[T('cpTitleRun'),T('thRun')], rent:[T('cpTitleRent'),T('thRent')],
+    idle:[T('cpTitleIdle'),T('thIdle')], tot:[T('cpTitleTot'),T('thTot')],
+    types:[T('cpTitleTypes'),T('thTot')], units:[T('cpTitleUnits'),'']};
+  const t=titles[cpMetric];
+  document.getElementById('cpTitle').textContent=t[0];
+  const nodata='<p style="color:'+thc().nodata+';font-size:12px">'+T('nodata')+'</p>';
+  const chipsEl=document.getElementById('cpChips');
+  if(cpMetric==='units'){
+    if(chipsEl) chipsEl.innerHTML='';
+    document.getElementById('cpTotals').textContent=T('thTot')+' '+fmtN(a.tot)+' · '+T('thRun')+' '+fmtN(a.tr)+' · '+T('thRent')+' '+fmtN(a.te)+' · '+T('thIdle')+' '+fmtN(a.ti);
+    const uRows=Object.entries(a.byUnit).sort((x,y)=>y[1].tot-x[1].tot);
+    setHTML('cpTable', uRows.length? `<table><tr><th>${T('thUnit')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th><th class="num">${T('thShare')}</th><th class="num">${T('thIdlePct')}</th></tr>`+
+      uRows.map(([u,x])=>`<tr><td><b>${u}</b></td><td class="num">${fmtN(x.run)}</td><td class="num">${fmtN(x.rent)}</td><td class="num">${fmtN(x.idle)}</td><td class="num">${fmtN(x.tot)}</td><td class="num">${a.tot?(x.tot/a.tot*100).toFixed(1)+'%':'—'}</td><td class="num">${x.tot?(x.idle/x.tot*100).toFixed(1)+'%':'—'}</td></tr>`).join('')+
+      `<tr class="tot"><td>${LANG==='en'?'TOTAL':T('thTot')}</td><td class="num">${fmtN(a.tr)}</td><td class="num">${fmtN(a.te)}</td><td class="num">${fmtN(a.ti)}</td><td class="num">${fmtN(a.tot)}</td><td class="num">100%</td><td class="num">${a.tot?(a.ti/a.tot*100).toFixed(1)+'%':'—'}</td></tr></table>`:nodata);
+    return;
+  }
+  if(chipsEl){
+    const chip=(u,label)=>`<button class="cpbtn${cpUnit===u?' pri':''}" onclick="cpSetUnit('${u}')">${label}</button>`;
+    chipsEl.innerHTML=chip('all',T('chipAll'))+[...selU].map(u=>chip(u,u)).join('');
+  }
+  const rows=cpRows();
+  const key=cpMetric==='types'?'tot':cpMetric;
+  const kval=r=>(key==='tot'?r.tot:(key==='run'?r.run:(key==='rent'?r.rent:r.idle)));
+  let list=rows;
+  if(cpMetric!=='types') list=rows.filter(r=>kval(r)>0);
+  list.sort((x,y)=>kval(y)-kval(x));
+  const mTot=list.reduce((s,r)=>s+kval(r),0);
+  const scope=cpUnit==='all'?T('cpAllUnits'):cpUnit;
+  document.getElementById('cpTotals').textContent=scope+' · '+list.length+' '+T('cpTypes')+' · '+t[1]+' '+T('thTot')+' '+fmtN(mTot);
+  setHTML('cpTable', list.length? `<div style="overflow:auto;max-height:70vh"><table><tr><th>${T('thSL')}</th><th>${T('thType')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th><th>${T('thEdit')}</th></tr>`+
+    list.map(r=>`<tr><td>${esc(r.sl)}</td><td>${esc(r.type)}</td><td class="num">${fmtN(r.run)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${fmtN(r.idle)}</td><td class="num"><b>${fmtN(r.tot)}</b></td><td><button class="cpbtn" style="padding:4px 10px;font-size:12px" onclick="cpEditRow('${esc(r.sl)}')">✏️ ${T('thEdit')}</button></td></tr>`).join('')+'</table></div>':nodata);
+}
+function cpBuildEditLists(){
+  const ts=document.getElementById('cpType');
+  if(ts) ts.innerHTML=D.rows.map(r=>`<option value="${esc(r.sl)}">${esc(r.sl)} · ${esc(r.type)}</option>`).join('');
+  const us=document.getElementById('cpUnit');
+  if(us) us.innerHTML=D.units.map(u=>`<option>${u}</option>`).join('');
+  cpBuildLineOpts(); cpTargetChange();
+}
+function cpBuildLineOpts(){
+  const u=document.getElementById('cpUnit').value;
+  const ls=document.getElementById('cpLine');
+  if(ls) ls.innerHTML=(D.lineCols||[]).filter(l=>l[1]===u).map(l=>`<option value="${esc(l[2])}">${esc(l[2])}</option>`).join('');
+}
+function cpTargetChange(){
+  const line=document.getElementById('cpTarget').value==='line';
+  document.getElementById('cpFieldWrap').style.display=line?'none':'block';
+  document.getElementById('cpLineWrap').style.display=line?'block':'none';
+}
+async function cpSave(){
+  const url=cpGet('mc-entry-url');
+  const token=document.getElementById('cpToken').value;
+  const sl=document.getElementById('cpType').value;
+  const type=(D.rows.find(r=>r.sl===sl)||{}).type||'';
+  const unit=document.getElementById('cpUnit').value;
+  const target=document.getElementById('cpTarget').value;
+  const val=document.getElementById('cpVal').value;
+  if(!sl){ cpSay(T('msgType'),'err'); return; }
+  if(val===''||isNaN(parseFloat(val))){ cpSay(T('msgCount'),'err'); return; }
+  if(!url){ cpSay(T('msgSetupUrl'),'err'); toggleCpSettings(); return; }
+  if(!token){ cpSay(T('msgToken'),'err'); toggleCpSettings(); return; }
+  if(document.getElementById('cpRemember').checked) cpSet('mc-entry-token',token);
+  const q=new URLSearchParams({token, action:'edit', sl, type, unit, target,
+    field:document.getElementById('cpField').value,
+    line:document.getElementById('cpLine').value, value:val});
+  const btn=document.getElementById('cpSaveBtn'); btn.disabled=true; cpSay(T('msgSaving'));
+  try{
+    const res=await fetch(url+'?'+q.toString()+'&cb='+Date.now());
+    const j=await res.json();
+    if(!j.ok) throw new Error(j.error||'unknown error');
+    cpSay(T('msgSaved'),'ok');
+    await refreshLive(false);
+    cpSetTab('list');
+  }catch(e){ cpSay(Tf('msgSaveFail', {e: e.message}),'err'); }
+  btn.disabled=false;
+}
+function cpEditRow(sl){
+  const scope=cpUnit;
+  cpSetTab('edit');
+  const ts=document.getElementById('cpType'); if(ts) ts.value=sl;
+  if(scope!=='all'){ const us=document.getElementById('cpUnit');
+    if(us){ us.value=scope; cpBuildLineOpts(); } }
+}
+function cpPrint(){ cpSetTab('list');
+  const oldT=document.title;
+  const t=document.getElementById('cpTitle').textContent;
+  document.title=t+' — Machine Inventory';
+  const foot=document.getElementById('cpPrintFoot');
+  if(foot) foot.textContent=Tf('cpFoot', {d: new Date().toLocaleString('en-GB')});
+  const restore=()=>{ document.title=oldT; window.removeEventListener('afterprint',restore); };
+  window.addEventListener('afterprint',restore);
+  window.print();
+}
+buildFilters(); applyTheme(); applyLang(); render(); refreshLive(false); fetchRentLog(false);
+</script>
+</body></html>
