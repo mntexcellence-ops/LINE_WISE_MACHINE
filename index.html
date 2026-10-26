@@ -62,7 +62,7 @@ tr.tot td{font-weight:800;color:var(--text);background:#EFFAF3;border-top:2px so
 .leg{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:9px}
 .leg div{font-size:11px;color:var(--muted);display:flex;gap:5px;align-items:center}
 .leg i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
 .nav div{background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;padding:13px 6px;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--text);box-shadow:0 2px 10px var(--shadow)}
 .nav div span{color:var(--brand-b);margin-right:7px}
 .nav div.act{background:linear-gradient(135deg,#006666,#0E8A8A);color:#fff;border-color:#006666}
@@ -109,7 +109,7 @@ tr.tot td{font-weight:800;color:var(--text);background:#EFFAF3;border-top:2px so
 .insight p{font-size:12px;color:var(--muted);line-height:1.5}
 .insight b{color:var(--text)}
 @media(max-width:1100px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}.s3,.s4,.s6,.s12{grid-column:span 12}}
-@media(max-width:680px){body{padding:8px}.kpis{grid-template-columns:repeat(2,1fr);gap:9px}.nav{grid-template-columns:repeat(4,1fr);gap:9px}.topbar{flex-wrap:wrap;gap:10px;padding:12px 14px}.brand h1{font-size:16px}.logoimg{height:42px}.side{position:static}.card{padding:13px 12px}.kpi{padding:11px 12px 6px}}
+@media(max-width:680px){body{padding:8px}.kpis{grid-template-columns:repeat(2,1fr);gap:9px}.nav{grid-template-columns:repeat(5,1fr);gap:9px}.topbar{flex-wrap:wrap;gap:10px;padding:12px 14px}.brand h1{font-size:16px}.logoimg{height:42px}.side{position:static}.card{padding:13px 12px}.kpi{padding:11px 12px 6px}}
 @media(max-width:380px){.kpi .v{font-size:13px}.nav div{font-size:10.5px;padding:11px 3px}}
 </style></head><body>
 <div class="app">
@@ -187,25 +187,13 @@ tr.tot td{font-weight:800;color:var(--text);background:#EFFAF3;border-top:2px so
           <div class="card s6"><h3><i>★</i><span data-t="rentTopT"></span></h3><div class="s" data-t="rentTopS"></div><div id="rentTop"></div></div>
           <div class="card s12"><h3><i>▤</i><span data-t="rentListT"></span></h3><div class="s" data-t="rentListS"></div><div class="tblscroll" id="rentList"></div></div>
           <div class="card s12"><h3><i>▤</i><span data-t="rentUnitT"></span></h3><div class="s" data-t="rentUnitS"></div><div id="rentUnit"></div></div>
-          <div class="card s12"><h3><i>▦</i><span data-t="rentDayCalT"></span></h3><div class="s" data-t="rentDayCalS"></div>
-            <div id="rentDayCal"></div><div id="rentDayDetail" style="margin-top:12px"></div>
-            <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
-              <h4 style="font-size:13px;margin-bottom:8px" data-t="logFormT"></h4>
-              <div class="efgrid">
-                <div><label data-t="logDateL"></label><input type="date" id="logDate" class="efinput"></div>
-                <div><label data-t="logUnitL"></label><select id="logUnit" class="efinput"></select></div>
-                <div style="grid-column:span 2"><label data-t="logTypeL"></label><select id="logType" class="efinput"></select></div>
-                <div><label data-t="logCountL"></label><input type="number" step="any" min="0" id="logCount" class="efinput"></div>
-                <div style="grid-column:span 2"><label data-t="logRemarksL"></label><input type="text" id="logRemarks" class="efinput"></div>
-              </div>
-              <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-                <button class="cpbtn pri" id="logSaveBtn" onclick="saveRentLog()" data-t="logSaveBtn"></button>
-                <span id="logMsg" style="font-size:12px"></span>
-              </div>
-            </div>
-          </div>
           <div class="card s12"><h3><i>▦</i><span data-t="rentCalT"></span></h3><div class="s" data-t="rentCalS"></div><div id="rentCal"></div><div id="rentCalDetail" style="margin-top:12px"></div></div>
           <div class="card s12"><h3><i>▤</i><span data-t="rentTabT"></span></h3><div class="s" data-t="rentTabS"></div><div style="overflow:auto" id="rentTab"></div></div>
+        </section>
+      </div>
+      <div id="view-hist" class="view">
+        <section class="grid">
+          <div class="card s12"><h3><i>◷</i><span data-t="histT"></span></h3><div class="s" data-t="histS"></div><div id="histCal"></div><div id="histDetail" style="margin-top:12px"></div></div>
         </section>
       </div>
       <div class="nav">
@@ -213,6 +201,7 @@ tr.tot td{font-weight:800;color:var(--text);background:#EFFAF3;border-top:2px so
         <div id="nav-list" onclick="switchView('list')"><span>▤</span><span data-t="navList"></span></div>
         <div id="nav-unit" onclick="switchView('unit')"><span>⬢</span><span data-t="navUnit"></span></div>
         <div id="nav-rent" onclick="switchView('rent')"><span>↔</span><span data-t="navRent"></span></div>
+        <div id="nav-hist" onclick="switchView('hist')"><span>◷</span><span data-t="navHist"></span></div>
       </div>
       <div class="foot" data-t="foot"></div>
     </main>
@@ -316,16 +305,10 @@ rentCalNone:'No data for this month yet',rentCalTot:'Total',
 rentTabT:'Monthly Rent Table',rentTabS:'Rent amounts per unit per month (PREV MONTH tab snapshot at build time)',
 rentLineNote:'Line view has no rented split — clear the line filter to see rentals.',
 rentMonNone:'Monthly rent data is not available (PREV MONTH tab could not be read at build time).',
-rentDayCalT:'Daily Rental Calendar',rentDayCalS:'Click any date to see that day\'s rented machines (from the RENTAL LOG tab). Log a day below to fill the calendar.',
-dayCalRefresh:'↻ Refresh log',dayCalTotal:'Total rented',dayCalNoLog:'No rental logged for this day',
-dayCalHint:'Daily log data comes from the RENTAL LOG tab via the same Apps Script URL as Edit Counts. If nothing loads, save the URL + password in ⚙️ Setup (open any card popup) and make sure the script file is the NEW version with the log action.',
-logFormT:'➕ Log Daily Rental',logDateL:'Date',logUnitL:'Unit',logTypeL:'Machine Type',logCountL:'Rented Count',logRemarksL:'Remarks',
-logSaveBtn:'💾 Save Log',
-logNeedFields:'❌ Date, Unit and Machine Type are required.',
-logNeedCount:'❌ Enter a valid Rented Count (0 or more).',
-logNeedSetup:'❌ Setup needed — open any card popup → ⚙️ Setup and save the Apps Script URL + password first.',
-logSaving:'⏳ Saving...',logSaved:'✅ Log saved!',
-logFail:'❌ Save failed: {e}'
+navHist:'HISTORY',histT:'Machine History Calendar',
+histS:'Daily snapshots of the DATA tab, saved automatically every night. Click any date to see that day\'s machines — how many, which types, and in which factory they were used.',
+histRefresh:'↻ Refresh',histNoData:'No snapshot for this day yet — snapshots start from the day the daily trigger is set up.',
+histHint:'History needs the Apps Script URL + password in ⚙️ Setup (open any card popup) AND the daily trigger — run setupDailyTrigger once in the Apps Script editor (see the script file\'s instructions).'
 },bn:{
 brandTitle:'মেশিন <span>ইনভেন্টরি</span>',brandSub:'ডেক্কো ইশো গ্রুপ · রানিং · ভাড়া · অলস — DGL-1 · DRL · DFL · GGL · AFL · DGL-2',
 refreshBtn:'⟳ ডাটা রিফ্রেশ',filters:'⚙ ফিল্টার',unitH:'ইউনিট',lineH:'লাইন / সেকশন',
@@ -382,16 +365,10 @@ rentCalNone:'এই মাসের ডাটা এখনো নেই',rentCal
 rentTabT:'মাসিক ভাড়ার টেবিল',rentTabS:'প্রতি মাসে প্রতি ইউনিটের ভাড়ার পরিমাণ (PREV MONTH ট্যাব, বানানোর সময়ের স্ন্যাপশট)',
 rentLineNote:'লাইন ভিউতে ভাড়ার ভাগ নেই — ভাড়া দেখতে লাইন ফিল্টার তুলে দিন।',
 rentMonNone:'মাসিক ভাড়ার ডাটা পাওয়া যায়নি (বানানোর সময় PREV MONTH ট্যাব পড়া যায়নি)।',
-rentDayCalT:'দৈনিক ভাড়া ক্যালেন্ডার',rentDayCalS:'যেকোনো তারিখে ক্লিক করলে ওই দিনের ভাড়া মেশিন দেখাবে (RENTAL LOG ট্যাব থেকে)। নিচে লগ দিলে ক্যালেন্ডার ভরবে।',
-dayCalRefresh:'↻ লগ রিফ্রেশ',dayCalTotal:'মোট ভাড়া',dayCalNoLog:'এই দিনের কোনো ভাড়া লগ নেই',
-dayCalHint:'দৈনিক লগ ডাটা RENTAL LOG ট্যাব থেকে আসে, Edit Counts-এর অ্যাপস স্ক্রিপ্ট URL দিয়েই। কিছু না এলে যেকোনো কার্ড popup থেকে ⚙️ Setup-এ URL + পাসওয়ার্ড সেভ করুন, আর স্ক্রিপ্ট ফাইলটা নতুন ভার্সন (log action সহ) আছে কিনা দেখুন।',
-logFormT:'➕ দৈনিক ভাড়া লগ',logDateL:'তারিখ',logUnitL:'ইউনিট',logTypeL:'মেশিন টাইপ',logCountL:'ভাড়া সংখ্যা',logRemarksL:'মন্তব্য',
-logSaveBtn:'💾 লগ সেভ করুন',
-logNeedFields:'❌ তারিখ, ইউনিট আর মেশিন টাইপ দিতে হবে।',
-logNeedCount:'❌ সঠিক ভাড়া সংখ্যা দিন (০ বা তার বেশি)।',
-logNeedSetup:'❌ প্রথমে সেটআপ দরকার — যেকোনো কার্ড popup থেকে ⚙️ Setup-এ Apps Script URL + পাসওয়ার্ড সেভ করুন।',
-logSaving:'⏳ সেভ হচ্ছে...',logSaved:'✅ লগ সেভ হয়েছে!',
-logFail:'❌ সেভ হয়নি: {e}'
+navHist:'ইতিহাস',histT:'মেশিন ইতিহাস ক্যালেন্ডার',
+histS:'DATA ট্যাবের দৈনিক স্ন্যাপশট, প্রতি রাতে স্বয়ংক্রিয়ভাবে সেভ হয়। যেকোনো তারিখে ক্লিক করলে ওই দিনের মেশিন দেখাবে — কতগুলো, কোন কোন টাইপ, কোন ফ্যাক্টরিতে ব্যবহার হয়েছে।',
+histRefresh:'↻ রিফ্রেশ',histNoData:'এই দিনের কোনো স্ন্যাপশট এখনো নেই — ডেইলি ট্রিগার চালু করার দিন থেকে স্ন্যাপশট জমা হবে।',
+histHint:'ইতিহাসের জন্য ⚙️ Setup-এ Apps Script URL + পাসওয়ার্ড লাগবে (যেকোনো কার্ড popup থেকে), আর ডেইলি ট্রিগার — Apps Script এডিটরে একবার setupDailyTrigger চালাতে হবে (স্ক্রিপ্ট ফাইলের নির্দেশনা দেখুন)।'
 }};
 let LANG='en';
 try{ LANG = localStorage.getItem('mc-lang')==='bn' ? 'bn' : 'en'; }catch(e){}
@@ -410,7 +387,7 @@ function applyLang(){
 }
 function toggleLang(){ LANG = LANG==='en' ? 'bn' : 'en';
   try{ localStorage.setItem('mc-lang', LANG); }catch(e){}
-  applyLang(); render(); if(document.getElementById('cpModal').style.display==='block') renderCardPopup();
+  applyLang(); render(); renderHistCal(); if(document.getElementById('cpModal').style.display==='block') renderCardPopup();
 }
 let darkMode=false;
 try{ darkMode = localStorage.getItem('ud-theme')==='dark'; }catch(e){}
@@ -655,48 +632,32 @@ function renderRent(){
     `<table><tr><th>${T('thUnit')}</th>`+M.months.map((m,i)=>`<th class="num">${monthName(i)}</th>`).join('')+`<th class="num">${T('thTot')}</th></tr>`+
     mRows.map(u=>{ const vals=M.data[u]; const tot=vals.reduce((s,v)=>s+v,0);
       return `<tr><td><b>${u}</b></td>`+vals.map(v=>`<td class="num">${v?fmtN(v):'—'}</td>`).join('')+`<td class="num"><b>${fmtN(tot)}</b></td></tr>`; }).join('')+`</table>`:nodata);
-  renderDayCal();
 }
-// ---- Daily rental log (RENTAL LOG tab, same Apps Script URL as Edit Counts) ----
-let rentLogMap={}, rentLogLoaded=false, rentLogLoading=false;
-let dayCalYM=null, dayCalSel=null;
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function isoOf(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
-function buildLogFormLists(){
-  const us=document.getElementById('logUnit');
-  if(us){ const v=us.value; us.innerHTML=D.units.map(u=>`<option>${u}</option>`).join(''); if(v) us.value=v; }
-  const ts=document.getElementById('logType');
-  if(ts){ const v=ts.value; ts.innerHTML=D.rows.map(r=>`<option value="${esc(r.sl)}">${esc(r.sl)} · ${esc(r.type)}</option>`).join(''); if(v) ts.value=v; }
-  const ds=document.getElementById('logDate');
-  if(ds && !ds.value) ds.value=todayISO();
-}
-async function fetchRentLog(force){
+// ---- Machine history calendar (HISTORY tab, auto nightly snapshots) ----
+let histMonthCache={}, histDayCache={}, histYM=null, histSel=null;
+function fetchHistMonth(ym){
   const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
-  if(!url || !token || rentLogLoading) return;
-  rentLogLoading=true;
-  try{
-    const q=new URLSearchParams({token, action:'getLog'});
-    const res=await fetch(url+'?'+q.toString()+'&cb='+Date.now());
-    const j=await res.json();
-    if(!j.ok) throw new Error(j.error||'unknown error');
-    rentLogMap={};
-    (j.rows||[]).forEach(r=>{
-      const iso=r[0], count=parseFloat(r[4])||0;
-      if(!rentLogMap[iso]) rentLogMap[iso]={total:0, entries:[]};
-      rentLogMap[iso].total+=count;
-      rentLogMap[iso].entries.push({unit:r[1], sl:r[2], type:r[3], count, remarks:r[5]||''});
-    });
-    Object.values(rentLogMap).forEach(d=>d.entries.sort((x,y)=>y.count-x.count));
-    rentLogLoaded=true;
-  }catch(e){ /* keep old cache; calendar shows the hint */ }
-  rentLogLoading=false;
-  renderDayCal();
+  if(!url || !token || histMonthCache[ym]) return Promise.resolve();
+  return fetch(url+'?'+new URLSearchParams({token, action:'getHistoryMonth', ym}).toString()+'&cb='+Date.now())
+    .then(r=>r.json()).then(j=>{ if(!j.ok) throw new Error(j.error||'unknown error');
+      histMonthCache[ym]=j.days||{}; }).catch(e=>{}).then(()=>renderHistCal());
 }
-function renderDayCal(){
-  buildLogFormLists();
-  if(!dayCalYM){ const d=new Date(); dayCalYM={y:d.getFullYear(), m:d.getMonth()}; }
-  if(!dayCalSel) dayCalSel=todayISO();
-  const {y, m}=dayCalYM;
+function fetchHistDay(date){
+  const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
+  if(!url || !token || histDayCache[date]) return Promise.resolve();
+  return fetch(url+'?'+new URLSearchParams({token, action:'getHistoryDay', date}).toString()+'&cb='+Date.now())
+    .then(r=>r.json()).then(j=>{ if(!j.ok) throw new Error(j.error||'unknown error');
+      histDayCache[date]=(j.rows||[]).map(r=>({sl:r[0], type:r[1], unit:r[2], run:r[3], rent:r[4], idle:r[5], tot:r[3]+r[4]+r[5]})).sort((x,y)=>y.tot-x.tot);
+    }).catch(e=>{}).then(()=>renderHistCal());
+}
+function renderHistCal(){
+  if(!histYM){ const d=new Date(); histYM={y:d.getFullYear(), m:d.getMonth()}; }
+  if(!histSel) histSel=todayISO();
+  const {y, m}=histYM;
+  const ymKey=y+'-'+String(m+1).padStart(2,'0');
+  const days=histMonthCache[ymKey]||{};
   const first=new Date(y,m,1).getDay();
   const dim=new Date(y,m+1,0).getDate();
   const wd = LANG==='bn' ? ['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -704,57 +665,40 @@ function renderDayCal(){
   for(let i=0;i<first;i++) cells+='<div></div>';
   for(let d=1; d<=dim; d++){
     const iso=isoOf(y,m,d);
-    const info=rentLogMap[iso];
-    const has=info && info.total>0;
-    const sel=iso===dayCalSel;
-    cells+=`<button class="cpbtn ${sel?'pri':''}" style="padding:8px 2px;text-align:center;${has?'border-color:var(--brand);':''}" onclick="dayCalSelect('${iso}')"><b>${d}</b>${has?`<br><span style="font-size:11px">↔ ${fmtN(info.total)}</span>`:''}</button>`;
+    const info=days[iso];
+    const has=info && info.tot>0;
+    const sel=iso===histSel;
+    cells+=`<button class="cpbtn ${sel?'pri':''}" style="padding:8px 2px;text-align:center;${has?'border-color:var(--brand);':''}" onclick="histSelect('${iso}')"><b>${d}</b>${has?`<br><span style="font-size:11px">⬢ ${fmtN(info.tot)}</span>`:''}</button>`;
   }
+  const hasSetup=!!(cpGet('mc-entry-url') && cpGet('mc-entry-token'));
   const nav=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-    <button class="cpbtn" onclick="dayCalMove(-1)">◀</button>
+    <button class="cpbtn" onclick="histMove(-1)">◀</button>
     <b style="flex:1;text-align:center">${monthName(m)} ${y}</b>
-    <button class="cpbtn" onclick="dayCalMove(1)">▶</button>
-    <button class="cpbtn" onclick="fetchRentLog(true)">${T('dayCalRefresh')}</button></div>`;
-  setHTML('rentDayCal', nav+`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted);margin-bottom:4px">${wd.map(w=>`<div>${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${cells}</div>`+
-    (!rentLogLoaded?`<p style="font-size:12px;color:var(--muted);margin-top:10px">${T('dayCalHint')}</p>`:''));
-  const info=rentLogMap[dayCalSel];
-  if(info && info.total>0){
-    setHTML('rentDayDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${dayCalSel} — ${T('dayCalTotal')}: ${fmtN(info.total)}</b><table style="margin-top:8px"><tr><th>${T('thType')}</th><th>${T('thUnit')}</th><th class="num">${T('thRent')}</th><th>${T('logRemarksL')}</th></tr>`+
-      info.entries.map(e=>`<tr><td>${esc(e.type)}</td><td>${esc(e.unit)}</td><td class="num">${fmtN(e.count)}</td><td>${esc(e.remarks)}</td></tr>`).join('')+`</table></div>`);
+    <button class="cpbtn" onclick="histMove(1)">▶</button>
+    <button class="cpbtn" onclick="histRefresh()">${T('histRefresh')}</button></div>`;
+  setHTML('histCal', nav+`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted);margin-bottom:4px">${wd.map(w=>`<div>${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${cells}</div>`+
+    (!hasSetup?`<p style="font-size:12px;color:var(--muted);margin-top:10px">${T('histHint')}</p>`:''));
+  const rows=histDayCache[histSel];
+  if(rows && rows.length){
+    let tot=0, tr=0, te=0, ti=0; const byU={};
+    rows.forEach(r=>{ tot+=r.tot; tr+=r.run; te+=r.rent; ti+=r.idle;
+      if(!byU[r.unit]) byU[r.unit]=0; byU[r.unit]+=r.tot; });
+    const uLine=Object.entries(byU).sort((a,b)=>b[1]-a[1]).map(([u,v])=>`${u}: ${fmtN(v)}`).join(' · ');
+    setHTML('histDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${histSel} — ${T('thTot')}: ${fmtN(tot)} · ${T('thRun')}: ${fmtN(tr)} · ${T('thRent')}: ${fmtN(te)} · ${T('thIdle')}: ${fmtN(ti)}</b><div style="font-size:12px;margin-top:6px">${uLine}</div><table style="margin-top:8px"><tr><th>${T('thType')}</th><th>${T('thUnit')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th></tr>`+
+      rows.map(r=>`<tr><td>${esc(r.type)}</td><td>${esc(r.unit)}</td><td class="num">${fmtN(r.run)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${fmtN(r.idle)}</td><td class="num"><b>${fmtN(r.tot)}</b></td></tr>`).join('')+`</table></div>`);
   } else {
-    setHTML('rentDayDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${dayCalSel}</b> — ${T('dayCalNoLog')}</div>`);
+    setHTML('histDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${histSel}</b> — ${T('histNoData')}</div>`);
   }
 }
-function dayCalMove(dir){
-  let {y, m}=dayCalYM; m+=dir;
+function histMove(dir){ let {y, m}=histYM; m+=dir;
   if(m<0){ m=11; y--; } if(m>11){ m=0; y++; }
-  dayCalYM={y, m}; renderDayCal();
+  histYM={y, m}; const ymKey=y+'-'+String(m+1).padStart(2,'0');
+  renderHistCal(); fetchHistMonth(ymKey);
 }
-function dayCalSelect(iso){ dayCalSel=iso; renderDayCal(); }
-async function saveRentLog(){
-  const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
-  const msgEl=document.getElementById('logMsg');
-  const say=(m)=>{ if(msgEl) msgEl.textContent=m; };
-  const date=document.getElementById('logDate').value;
-  const unit=document.getElementById('logUnit').value;
-  const sl=document.getElementById('logType').value;
-  const type=(D.rows.find(r=>r.sl===sl)||{}).type||'';
-  const count=document.getElementById('logCount').value;
-  const remarks=document.getElementById('logRemarks').value||'';
-  if(!date || !unit || !sl){ say(T('logNeedFields')); return; }
-  if(count==='' || isNaN(parseFloat(count)) || parseFloat(count)<0){ say(T('logNeedCount')); return; }
-  if(!url || !token){ say(T('logNeedSetup')); return; }
-  const btn=document.getElementById('logSaveBtn'); if(btn) btn.disabled=true; say(T('logSaving'));
-  try{
-    const q=new URLSearchParams({token, action:'log', date, unit, sl, type, count, remarks});
-    const res=await fetch(url+'?'+q.toString()+'&cb='+Date.now());
-    const j=await res.json();
-    if(!j.ok) throw new Error(j.error||'unknown error');
-    say(T('logSaved'));
-    await fetchRentLog(true);
-    const d=new Date(date+'T00:00:00');
-    dayCalYM={y:d.getFullYear(), m:d.getMonth()}; dayCalSel=date; renderDayCal();
-  }catch(e){ say(Tf('logFail', {e: e.message})); }
-  if(btn) btn.disabled=false;
+function histSelect(iso){ histSel=iso; renderHistCal(); fetchHistDay(iso); }
+function histRefresh(){ const {y, m}=histYM; const ymKey=y+'-'+String(m+1).padStart(2,'0');
+  delete histMonthCache[ymKey]; delete histDayCache[histSel];
+  renderHistCal(); fetchHistMonth(ymKey).then(()=>fetchHistDay(histSel));
 }
 function rentCalMonth(i, silent){
   rentCalSel=i;
@@ -766,7 +710,7 @@ function rentCalMonth(i, silent){
 }
 let curView='ov';
 function switchView(v){ curView=v;
-  ['ov','list','unit','rent'].forEach(k=>{
+  ['ov','list','unit','rent','hist'].forEach(k=>{
     const el=document.getElementById('view-'+k); if(el) el.classList.toggle('on', k===v);
     const nv=document.getElementById('nav-'+k); if(nv) nv.classList.toggle('act', k===v); });
   window.scrollTo({top:0, behavior:'smooth'}); }
@@ -998,6 +942,9 @@ function cpPrint(){ cpSetTab('list');
   window.addEventListener('afterprint',restore);
   window.print();
 }
-buildFilters(); applyTheme(); applyLang(); render(); refreshLive(false); fetchRentLog(false);
+buildFilters(); applyTheme(); applyLang(); render(); refreshLive(false);
+renderHistCal();
+(function(){ const d=new Date(); const ym=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  fetchHistMonth(ym).then(()=>fetchHistDay(todayISO())); })();
 </script>
 </body></html>
