@@ -618,7 +618,6 @@ function render(){
     {l:T('kpiRun'), v:fmtN(a.tr), c:`<span class="chip g">${a.tot?(a.tr/a.tot*100).toFixed(1)+'%':''}</span>`, ic:'▶', bg:'#DCF5E5', fg:'#15803D', act:'run'},
     {l:T('kpiRent'), v:fmtN(a.te), c:`<span class="chip b">${a.tot?(a.te/a.tot*100).toFixed(1)+'%':''}</span>`, ic:'↔', bg:'#DBEAFE', fg:'#1D4ED8', act:'rent'},
     {l:T('kpiIdle'), v:fmtN(a.ti), c:`<span class="chip r">${a.tot?(a.ti/a.tot*100).toFixed(1)+'%':''}</span>`, ic:'⏸️', bg:'#FDE3E3', fg:'#DC2626', act:'idle'},
-    {l:T('kpiTypes'), v:fmtN(a.nz), c:`<span class="chip n">${D.rows.length} ${T('chipInSheet')}</span>`, ic:'⚙', bg:'#EDE9FE', fg:'#6D28D9', act:'types'},
     {l:T('kpiUnits'), v:selU.size+' / '+D.units.length, c:`<span class="chip n">${T('chipUnits')}</span>`, ic:'🏭', bg:'#FEF3C7', fg:'#B45309', act:'units'},
     {l:T('kpiLines'), v:fmtN(lineCount()), c:`<span class="chip n">${T('chipLines')}</span>`, ic:'☰', bg:'#E0F2FE', fg:'#0369A1', act:'lines', nc:1},
   ];
