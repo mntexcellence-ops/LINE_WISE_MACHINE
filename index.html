@@ -360,7 +360,7 @@ idleSrcNote:'Reasons come from the Sheet\'s IDLE (DETAILS) columns — write the
 idleWithReason:'With reason',idleTypesIdle:'types idle',
 navHist:'HISTORY',histT:'Machine History Calendar',
 histS:'Daily snapshots of the DATA tab, saved automatically every night. Click any date to see that day\'s machines — how many, which types, and in which factory they were used.',
-histRefresh:'↻ Refresh',histNoData:'No snapshot for this day yet — snapshots start from the day the daily trigger is set up.',
+histRefresh:'↻ Refresh',histNoData:'No snapshot for this day yet — snapshots start from the day the daily trigger is set up.',histNoUnit:'No machines for this unit on this day.',
 histHint:'History needs the Apps Script URL + password in ⚙️ Setup (open any card popup) AND the daily trigger — run setupDailyTrigger once in the Apps Script editor (see the script file\'s instructions).',
 histAuth:'⚠️ History could not be loaded — the Apps Script link returned a sign-in page. Redeploy the script with "Who has access: Anyone" (Deploy → Manage deployments → Edit → Anyone → Deploy), then press Refresh.'
 },bn:{
@@ -441,7 +441,7 @@ idleSrcNote:'কারণগুলো Sheet-এর IDLE (DETAILS) কলাম �
 idleWithReason:'কারণ আছে',idleTypesIdle:'টি টাইপ অলস',
 navHist:'ইতিহাস',histT:'মেশিন ইতিহাস ক্যালেন্ডার',
 histS:'DATA ট্যাবের দৈনিক স্ন্যাপশট, প্রতি রাতে স্বয়ংক্রিয়ভাবে সেভ হয়। যেকোনো তারিখে ক্লিক করলে ওই দিনের মেশিন দেখাবে — কতগুলো, কোন কোন টাইপ, কোন ফ্যাক্টরিতে ব্যবহার হয়েছে।',
-histRefresh:'↻ রিফ্রেশ',histNoData:'এই দিনের কোনো স্ন্যাপশট এখনো নেই — ডেইলি ট্রিগার চালু করার দিন থেকে স্ন্যাপশট জমা হবে।',
+histRefresh:'↻ রিফ্রেশ',histNoData:'এই দিনের কোনো স্ন্যাপশট এখনো নেই — ডেইলি ট্রিগার চালু করার দিন থেকে স্ন্যাপশট জমা হবে।',histNoUnit:'এই দিনে এই ইউনিটের কোনো মেশিন নেই।',
 histHint:'ইতিহাসের জন্য ⚙️ সেটআপ-এ Apps Script URL + পাসওয়ার্ড লাগবে (যেকোনো কার্ড পপআপ থেকে), আর ডেইলি ট্রিগার — Apps Script এডিটরে একবার setupDailyTrigger চালাতে হবে (স্ক্রিপ্ট ফাইলের নির্দেশনা দেখুন)।',
 histAuth:'⚠️ ইতিহাস আনা যায়নি — Apps Script লিংক সাইন-ইন পেজ দিচ্ছে। স্ক্রিপ্টটি "Anyone" দিয়ে redeploy করুন (Deploy → Manage deployments → Edit → Who has access: Anyone → Deploy), তারপর Refresh চাপুন।'
 }};
@@ -898,14 +898,14 @@ function isoOf(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).pa
 // histErr: the endpoint answered with a non-JSON page (usually the Google
 // sign-in page because the deployment is not "Anyone") — surfaced in the
 // HISTORY tab as a plain-language redeploy hint instead of an empty calendar.
-let histMonthCache={}, histDayCache={}, histYM=null, histSel=null, histErr=false;
+let histMonthCache={}, histDayCache={}, histMonthUnitCache={}, histYM=null, histSel=null, histErr=false, histUnit='all';
 function fetchHistMonth(ym){
   const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
   if(!url || !token || histMonthCache[ym]) return Promise.resolve();
   return fetch(url+'?'+new URLSearchParams({token, action:'getHistoryMonth', ym}).toString()+'&cb='+Date.now())
     .then(r=>{ if(!(r.headers.get('content-type')||'').includes('json')) throw new Error('auth'); return r.json(); })
     .then(j=>{ if(!j.ok) throw new Error(j.error||'unknown error');
-      histMonthCache[ym]=j.days||{}; histErr=false; }).catch(e=>{ histErr=true; }).then(()=>renderHistCal());
+      histMonthCache[ym]=j.days||{}; histMonthUnitCache[ym]=j.byUnit||{}; histErr=false; }).catch(e=>{ histErr=true; }).then(()=>renderHistCal());
 }
 function fetchHistDay(date){
   const url=cpGet('mc-entry-url'), token=cpGet('mc-entry-token');
@@ -922,6 +922,7 @@ function renderHistCal(){
   const {y, m}=histYM;
   const ymKey=y+'-'+String(m+1).padStart(2,'0');
   const days=histMonthCache[ymKey]||{};
+  const daysU=histMonthUnitCache[ymKey]||{};
   const first=new Date(y,m,1).getDay();
   const dim=new Date(y,m+1,0).getDate();
   const wd = LANG==='bn' ? ['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -930,9 +931,13 @@ function renderHistCal(){
   for(let d=1; d<=dim; d++){
     const iso=isoOf(y,m,d);
     const info=days[iso];
-    const has=info && info.tot>0;
+    // Calendar badge follows the unit filter: the selected unit's total
+    // for that day (all units when 'all'). Falls back to the day total
+    // when the script is older than v6 and sends no per-unit breakdown.
+    const dayTot = histUnit==='all' ? (info && info.tot) || 0 : ((daysU[iso]||{})[histUnit] || 0);
+    const has=dayTot>0;
     const sel=iso===histSel;
-    cells+=`<button class="cpbtn ${sel?'pri':''}" style="padding:8px 2px;text-align:center;${has?'border-color:var(--brand);':''}" onclick="histSelect('${iso}')"><b>${d}</b>${has?`<br><span style="font-size:11px">⬢ ${fmtN(info.tot)}</span>`:''}</button>`;
+    cells+=`<button class="cpbtn ${sel?'pri':''}" style="padding:8px 2px;text-align:center;${has?'border-color:var(--brand);':''}" onclick="histSelect('${iso}')"><b>${d}</b>${has?`<br><span style="font-size:11px">⬢ ${fmtN(dayTot)}</span>`:''}</button>`;
   }
   const hasSetup=!!(cpGet('mc-entry-url') && cpGet('mc-entry-token'));
   const nav=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
@@ -940,21 +945,25 @@ function renderHistCal(){
     <b style="flex:1;text-align:center">${monthName(m)} ${y}</b>
     <button class="cpbtn" onclick="histMove(1)">▶</button>
     <button class="cpbtn" onclick="histRefresh()">${T('histRefresh')}</button></div>`;
-  setHTML('histCal', nav+`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted);margin-bottom:4px">${wd.map(w=>`<div>${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${cells}</div>`+
+  const unitBtns=['all', ...D.units].map(u=>`<button class="cpbtn ${histUnit===u?'pri':''}" onclick="histSetUnit('${u}')">${u==='all'?T('chipAll'):u}</button>`).join('');
+  const unitRow=`<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px"><b style="font-size:12.5px">${T('thUnit')}:</b>${unitBtns}</div>`;
+  setHTML('histCal', nav+`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted);margin-bottom:4px">${wd.map(w=>`<div>${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${cells}</div>`+unitRow+
     (!hasSetup?`<p style="font-size:12px;color:var(--muted);margin-top:10px">${T('histHint')}</p>`:'')+
     ((hasSetup && histErr)?`<p style="font-size:12px;color:#DC2626;margin-top:10px">${T('histAuth')}</p>`:''));
-  const rows=histDayCache[histSel];
+  const rowsAll=histDayCache[histSel];
+  const rows=rowsAll ? rowsAll.filter(r=>histUnit==='all'||r.unit===histUnit) : null;
   if(rows && rows.length){
     let tot=0, tr=0, te=0, ti=0; const byU={};
     rows.forEach(r=>{ tot+=r.tot; tr+=r.run; te+=r.rent; ti+=r.idle;
       if(!byU[r.unit]) byU[r.unit]=0; byU[r.unit]+=r.tot; });
     const uLine=Object.entries(byU).sort((a,b)=>b[1]-a[1]).map(([u,v])=>`${u}: ${fmtN(v)}`).join(' · ');
-    setHTML('histDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${histSel} — ${T('thTot')}: ${fmtN(tot)} · ${T('thRun')}: ${fmtN(tr)} · ${T('thRent')}: ${fmtN(te)} · ${T('thIdle')}: ${fmtN(ti)}</b><div style="font-size:12px;margin-top:6px">${uLine}</div><table style="margin-top:8px"><tr><th>${T('thType')}</th><th>${T('thUnit')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th></tr>`+
+    setHTML('histDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${histSel}${histUnit==='all'?'':' · '+histUnit} — ${T('thTot')}: ${fmtN(tot)} · ${T('thRun')}: ${fmtN(tr)} · ${T('thRent')}: ${fmtN(te)} · ${T('thIdle')}: ${fmtN(ti)}</b><div style="font-size:12px;margin-top:6px">${uLine}</div><table style="margin-top:8px"><tr><th>${T('thType')}</th><th>${T('thUnit')}</th><th class="num">${T('thRun')}</th><th class="num">${T('thRent')}</th><th class="num">${T('thIdle')}</th><th class="num">${T('thTot')}</th></tr>`+
       rows.map(r=>`<tr><td>${esc(r.type)}</td><td>${esc(r.unit)}</td><td class="num">${fmtN(r.run)}</td><td class="num">${fmtN(r.rent)}</td><td class="num">${fmtN(r.idle)}</td><td class="num"><b>${fmtN(r.tot)}</b></td></tr>`).join('')+`</table></div>`);
   } else {
-    setHTML('histDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${histSel}</b> — ${T('histNoData')}</div>`);
+    setHTML('histDetail', `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--soft)"><b>${histSel}${histUnit==='all'?'':' · '+histUnit}</b> — ${(rowsAll && rowsAll.length) ? T('histNoUnit') : T('histNoData')}</div>`);
   }
 }
+function histSetUnit(u){ histUnit=u; renderHistCal(); }
 function histMove(dir){ let {y, m}=histYM; m+=dir;
   if(m<0){ m=11; y--; } if(m>11){ m=0; y++; }
   histYM={y, m}; const ymKey=y+'-'+String(m+1).padStart(2,'0');
@@ -962,7 +971,7 @@ function histMove(dir){ let {y, m}=histYM; m+=dir;
 }
 function histSelect(iso){ histSel=iso; renderHistCal(); fetchHistDay(iso); }
 function histRefresh(){ const {y, m}=histYM; const ymKey=y+'-'+String(m+1).padStart(2,'0');
-  histErr=false; delete histMonthCache[ymKey]; delete histDayCache[histSel];
+  histErr=false; delete histMonthCache[ymKey]; delete histMonthUnitCache[ymKey]; delete histDayCache[histSel];
   renderHistCal(); fetchHistMonth(ymKey).then(()=>fetchHistDay(histSel));
 }
 function rentCalMonth(i, silent){
